@@ -1,0 +1,16 @@
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.idea/
+.vscode/
+*.iml
+*.jks
+key.properties
+.env
+.env.*
+android/local.properties
+ios/Flutter/ephemeral/
+.DS_Store
