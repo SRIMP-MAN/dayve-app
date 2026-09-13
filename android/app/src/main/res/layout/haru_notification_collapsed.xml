@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="HARU · 근무 중"
+            android:text="DAYVE · 근무 중"
             android:textColor="#242033"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -47,14 +47,14 @@
             android:indeterminate="false"
             android:max="100"
             android:progress="50"
-            android:progressBackgroundTint="#E8E3F4"
-            android:progressTint="#7565C8" />
+            android:progressBackgroundTint="#EAE6FA"
+            android:progressTint="#9C8CFF" />
     </LinearLayout>
 
     <ImageView
         android:layout_width="17dp"
         android:layout_height="17dp"
         android:layout_marginStart="7dp"
-        android:contentDescription="HARU"
+        android:contentDescription="DAYVE"
         android:src="@drawable/haru_pixel_cat" />
 </LinearLayout>

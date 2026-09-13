@@ -151,11 +151,16 @@ class LiveUpdatePlanner {
       _ => '',
     };
     final money = visible ? moneyFor?.call(updatedAt) : null;
+    final endAt = summary.segmentEndAt ?? summary.nextEventAt;
+    final endLabel = visible
+        ? '${_timeLabel(endAt)} '
+            '${summary.state == HaruDayState.working ? '퇴근' : '취침'}'
+        : '';
 
     return LiveUpdateSnapshot(
       visible: visible,
       state: summary.state.name,
-      title: stateLabel.isEmpty ? 'HARU' : 'HARU · $stateLabel',
+      title: stateLabel.isEmpty ? 'DAYVE' : 'DAYVE · $stateLabel',
       body: visible ? '$headline · 진행률 $progress%' : '',
       headline: headline,
       remainingMinutes: remainingMinutes,
@@ -163,7 +168,7 @@ class LiveUpdatePlanner {
       remainingLabel: remaining,
       progressPercent: progress,
       startTime: summary.segmentStartAt,
-      endsAt: summary.segmentEndAt ?? summary.nextEventAt,
+      endsAt: endAt,
       updatedAt: updatedAt,
       showCheckoutActions: showCheckoutActions,
       scheduleDate: scheduleDate,
@@ -173,6 +178,7 @@ class LiveUpdatePlanner {
       stateLabel: stateLabel,
       progressLeadingLabel: progressLeadingLabel,
       progressTrailingLabel: progressTrailingLabel,
+      endLabel: endLabel,
       todaySpendable: money?.today ?? '',
       monthlyRemaining: money?.remaining ?? '',
       monthlySpent: money?.spent ?? '',
@@ -225,4 +231,8 @@ class LiveUpdatePlanner {
     return '${hours.toString().padLeft(2, '0')}:'
         '${rest.toString().padLeft(2, '0')}';
   }
+
+  String _timeLabel(DateTime value) =>
+      '${value.hour.toString().padLeft(2, '0')}:'
+      '${value.minute.toString().padLeft(2, '0')}';
 }

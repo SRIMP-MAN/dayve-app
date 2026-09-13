@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:haru_app/data/local/settings_store.dart';
 import 'package:haru_app/domain/models/app_settings.dart';
@@ -29,13 +31,14 @@ void main() {
 
     expect(plan.current.snapshot.visible, isTrue);
     expect(plan.current.snapshot.state, 'working');
-    expect(plan.current.snapshot.title, 'HARU · 근무 중');
+    expect(plan.current.snapshot.title, 'DAYVE · 근무 중');
     expect(plan.current.snapshot.headline, '퇴근까지 06:00');
     expect(plan.current.snapshot.remainingMinutes, 360);
     expect(plan.current.snapshot.progress, closeTo(1 / 3, .001));
     expect(plan.current.snapshot.progressPercent, 33);
     expect(plan.current.snapshot.startTime, DateTime(2026, 9, 11, 9));
     expect(plan.current.snapshot.endsAt, DateTime(2026, 9, 11, 18));
+    expect(plan.current.snapshot.endLabel, '18:00 퇴근');
     expect(plan.current.snapshot.updatedAt, DateTime(2026, 9, 11, 12));
   });
 
@@ -48,9 +51,10 @@ void main() {
 
     expect(plan.current.snapshot.visible, isTrue);
     expect(plan.current.snapshot.state, 'afterWork');
-    expect(plan.current.snapshot.title, 'HARU · 내 시간');
+    expect(plan.current.snapshot.title, 'DAYVE · 내 시간');
     expect(plan.current.snapshot.headline, '취침까지 03:00');
     expect(plan.current.snapshot.progressPercent, 40);
+    expect(plan.current.snapshot.endLabel, '23:00 취침');
   });
 
   test('before-work live notification is hidden', () {
@@ -258,7 +262,7 @@ void main() {
     final snapshot = LiveUpdateSnapshot.fromMap({
       'visible': true,
       'state': 'working',
-      'title': 'HARU · 근무 중',
+      'title': 'DAYVE · 근무 중',
       'headline': '퇴근까지 01:19',
       'progress': .9,
       'progressPercent': 90,
@@ -270,6 +274,7 @@ void main() {
       'stateLabel': '근무 중',
       'progressLeadingLabel': '오전은 수고했어요',
       'progressTrailingLabel': '퇴근까지 01:19',
+      'endLabel': '18:00 퇴근',
       'todaySpendable': '31,578원',
       'monthlyRemaining': '600,000원',
       'monthlySpent': '0원',
@@ -278,9 +283,46 @@ void main() {
 
     expect(restored.progressPercent, 90);
     expect(restored.stateLabel, '근무 중');
+    expect(restored.endLabel, '18:00 퇴근');
     expect(restored.todaySpendable, '31,578원');
     expect(restored.monthlyRemaining, '600,000원');
     expect(restored.monthlySpent, '0원');
+  });
+
+  test('standard expanded notification excludes budget content', () {
+    final layout = File(
+      'android/app/src/main/res/layout/haru_notification_expanded.xml',
+    ).readAsStringSync();
+
+    expect(layout, contains('notification_expanded_progress'));
+    expect(layout, contains('notification_expanded_end'));
+    expect(layout, isNot(contains('notification_money_section')));
+    expect(layout, isNot(contains('notification_today_spendable')));
+  });
+
+  test('promoted renderer remains ProgressStyle without custom views', () {
+    final manager = File(
+      'android/app/src/main/kotlin/com/haruapp/haru_app/'
+      'HaruLiveUpdateManager.kt',
+    ).readAsStringSync();
+
+    expect(manager, contains('Notification.ProgressStyle()'));
+    expect(
+      manager,
+      matches(
+        RegExp(
+          r'requestPromotion = true,\s+useCustomViews = false',
+        ),
+      ),
+    );
+    expect(
+      manager,
+      matches(
+        RegExp(
+          r'requestPromotion = false,\s+useCustomViews = true',
+        ),
+      ),
+    );
   });
 }
 

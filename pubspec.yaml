@@ -1,5 +1,5 @@
 name: haru_app
-description: HARU - 오늘 내게 남은 시간과 돈을 보여주는 생활 계기판.
+description: DAYVE - 오늘 내게 남은 시간과 돈을 보여주는 생활 계기판.
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -24,3 +24,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/dayve_pixel_cat.png

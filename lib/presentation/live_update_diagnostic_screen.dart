@@ -158,7 +158,7 @@ class _LiveUpdateDiagnosticScreenState
                 ],
               ),
               _DiagnosticSection(
-                title: 'HARU 상태',
+                title: 'DAYVE 상태',
                 children: [
                   _DiagnosticRow.text(
                       'TimeEngine state', diagnostic.currentState),

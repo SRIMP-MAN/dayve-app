@@ -493,7 +493,7 @@ class HaruNotificationService extends ChangeNotifier {
       await _plugin.zonedSchedule(
         _wakeNotificationId,
         '좋은 아침이에요',
-        'HARU와 오늘의 여백을 확인해 보세요.',
+        'DAYVE와 오늘의 여백을 확인해 보세요.',
         tz.TZDateTime.from(plan.wakeAt!, tz.local),
         const NotificationDetails(
           android: AndroidNotificationDetails(

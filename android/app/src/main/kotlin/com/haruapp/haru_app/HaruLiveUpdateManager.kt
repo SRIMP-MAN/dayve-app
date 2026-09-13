@@ -14,7 +14,6 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.view.View
 import android.widget.RemoteViews
 import org.json.JSONArray
 import org.json.JSONObject
@@ -171,7 +170,7 @@ class HaruLiveUpdateManager(private val context: Context) {
         requestPromotion: Boolean,
         useCustomViews: Boolean,
     ): Notification {
-        val title = snapshot.optString("title", "HARU")
+        val title = snapshot.optString("title", "DAYVE")
         val headline = snapshot.optString("headline", snapshot.optString("body", ""))
         val progress = snapshot.optInt("progressPercent", 0).coerceIn(0, 100)
         val contentIntent = PendingIntent.getActivity(
@@ -240,7 +239,7 @@ class HaruLiveUpdateManager(private val context: Context) {
             val style = Notification.ProgressStyle()
                 .addProgressSegment(
                     Notification.ProgressStyle.Segment(100)
-                        .setColor(Color.rgb(117, 103, 200)),
+                        .setColor(Color.rgb(117, 102, 232)),
                 )
                 .setProgress(progress)
                 .setStyledByProgress(true)
@@ -274,7 +273,7 @@ class HaruLiveUpdateManager(private val context: Context) {
         snapshot: JSONObject,
         progress: Int,
     ): Pair<RemoteViews, RemoteViews> {
-        val title = snapshot.optString("title", "HARU")
+        val title = snapshot.optString("title", "DAYVE")
         val headline = snapshot.optString("headline", snapshot.optString("body", ""))
         val stateLabel = snapshot.optString("stateLabel", "")
         val stateAndHeadline = listOf(stateLabel, headline)
@@ -308,29 +307,10 @@ class HaruLiveUpdateManager(private val context: Context) {
                 R.id.notification_expanded_trailing,
                 snapshot.optString("progressTrailingLabel", headline),
             )
-
-            val moneyVisible = snapshot.optBoolean(
-                "moneyVisible",
-                snapshot.optBoolean("showMoney", false),
+            setTextViewText(
+                R.id.notification_expanded_end,
+                snapshot.optString("endLabel", ""),
             )
-            setViewVisibility(
-                R.id.notification_money_section,
-                if (moneyVisible) View.VISIBLE else View.GONE,
-            )
-            if (moneyVisible) {
-                setTextViewText(
-                    R.id.notification_today_spendable,
-                    snapshot.optString("todaySpendable", ""),
-                )
-                setTextViewText(
-                    R.id.notification_monthly_remaining,
-                    snapshot.optString("monthlyRemaining", ""),
-                )
-                setTextViewText(
-                    R.id.notification_monthly_spent,
-                    snapshot.optString("monthlySpent", ""),
-                )
-            }
         }
         return collapsed to expanded
     }
@@ -344,7 +324,7 @@ class HaruLiveUpdateManager(private val context: Context) {
         val diagnosticSnapshot = snapshot ?: JSONObject().apply {
             put("visible", false)
             put("state", "unknown")
-            put("title", "HARU · 진단")
+            put("title", "DAYVE · 진단")
             put("headline", "진단용 알림")
             put("progressPercent", 50)
             put("endTimeMillis", now + 60 * 60 * 1000L)
@@ -642,7 +622,7 @@ class HaruLiveUpdateManager(private val context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "HARU 실시간 상태",
+            "DAYVE 실시간 상태",
             NotificationManager.IMPORTANCE_LOW,
         ).apply {
             description = "근무와 퇴근 후 남은 시간을 표시합니다."

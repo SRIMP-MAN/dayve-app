@@ -7,7 +7,6 @@ import 'package:haru_app/domain/models/app_settings.dart';
 import 'package:haru_app/domain/models/budget_profile.dart';
 import 'package:haru_app/domain/models/schedule_entry.dart';
 import 'package:haru_app/domain/models/schedule_profile.dart';
-import 'package:haru_app/presentation/haru_progress_gauge.dart';
 import 'package:haru_app/presentation/haru_sheets.dart';
 import 'package:haru_app/domain/services/schedule_entry_service.dart';
 import 'package:haru_app/services/home_widget_service.dart';
@@ -91,7 +90,7 @@ void main() {
     await tester.tap(toggle);
     await tester.pumpAndSettle();
 
-    expect(find.text('잠금화면에서도 HARU를 볼까요?'), findsOneWidget);
+    expect(find.text('잠금화면에서도 DAYVE를 볼까요?'), findsOneWidget);
     expect(find.text('사용하기'), findsOneWidget);
     await tester.tap(find.byKey(const Key('enable_lock_screen_live')));
     await tester.pumpAndSettle();
@@ -243,7 +242,7 @@ void main() {
   testWidgets('working dashboard shows its progress gauge', (tester) async {
     await _pumpDashboard(tester, now: DateTime(2026, 9, 11, 12));
 
-    expect(find.byType(HaruProgressGauge), findsOneWidget);
+    expect(find.byKey(const Key('pixel_cat_progress_track')), findsOneWidget);
     expect(find.text('근무 진행'), findsOneWidget);
     expect(find.byKey(const Key('haru_pixel_pet')), findsOneWidget);
   });
@@ -252,7 +251,7 @@ void main() {
       (tester) async {
     await _pumpDashboard(tester, now: DateTime(2026, 9, 11, 20, 30));
 
-    expect(find.byType(HaruProgressGauge), findsOneWidget);
+    expect(find.byKey(const Key('pixel_cat_progress_track')), findsOneWidget);
     expect(find.text('자유시간 진행'), findsOneWidget);
     expect(find.text('50%'), findsOneWidget);
   });
@@ -260,7 +259,7 @@ void main() {
   testWidgets('day-off dashboard hides the progress gauge', (tester) async {
     await _pumpDashboard(tester, now: DateTime(2026, 9, 12, 12));
 
-    expect(find.byType(HaruProgressGauge), findsNothing);
+    expect(find.byKey(const Key('pixel_cat_progress_track')), findsNothing);
     expect(find.byKey(const Key('haru_pixel_pet')), findsNothing);
   });
 
@@ -398,8 +397,8 @@ void main() {
       ),
     );
 
-    expect(find.text('HARU · 근무 중'), findsOneWidget);
-    expect(find.byType(HaruProgressGauge), findsOneWidget);
+    expect(find.text('DAYVE · 근무 중'), findsOneWidget);
+    expect(find.byKey(const Key('dayve_pixel_cat')), findsOneWidget);
   });
 
   testWidgets('override save refreshes dashboard, widget and live update sync',
@@ -417,7 +416,8 @@ void main() {
     await tester.tap(find.text('오늘 휴무 처리'));
     await tester.pumpAndSettle();
 
-    expect(find.text('HARU · 휴무'), findsOneWidget);
+    expect(find.text('DAYVE · 휴무'), findsOneWidget);
+    expect(find.byKey(const Key('dayve_pixel_cat')), findsNothing);
     expect(harness.homeWidget.refreshCount, widgetRefreshes + 1);
     expect(harness.notification.syncCount, notificationSyncs + 1);
     expect(harness.notification.lastOverride?.isDayOff, isTrue);

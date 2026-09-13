@@ -20,6 +20,7 @@ class LiveUpdateSnapshot {
     this.stateLabel = '',
     this.progressLeadingLabel = '',
     this.progressTrailingLabel = '',
+    this.endLabel = '',
     this.todaySpendable = '',
     this.monthlyRemaining = '',
     this.monthlySpent = '',
@@ -46,6 +47,7 @@ class LiveUpdateSnapshot {
   final String stateLabel;
   final String progressLeadingLabel;
   final String progressTrailingLabel;
+  final String endLabel;
   final String todaySpendable;
   final String monthlyRemaining;
   final String monthlySpent;
@@ -73,6 +75,7 @@ class LiveUpdateSnapshot {
         'stateLabel': stateLabel,
         'progressLeadingLabel': progressLeadingLabel,
         'progressTrailingLabel': progressTrailingLabel,
+        'endLabel': endLabel,
         'todaySpendable': todaySpendable,
         'monthlyRemaining': monthlyRemaining,
         'monthlySpent': monthlySpent,
@@ -82,7 +85,7 @@ class LiveUpdateSnapshot {
     return LiveUpdateSnapshot(
       visible: map['visible'] as bool? ?? false,
       state: map['state'] as String? ?? 'hidden',
-      title: map['title'] as String? ?? 'HARU',
+      title: map['title'] as String? ?? 'DAYVE',
       body: map['body'] as String? ?? '',
       headline: map['headline'] as String? ?? map['body'] as String? ?? '',
       remainingMinutes: (map['remainingMinutes'] as num? ?? 0).toInt(),
@@ -106,6 +109,7 @@ class LiveUpdateSnapshot {
       stateLabel: map['stateLabel'] as String? ?? '',
       progressLeadingLabel: map['progressLeadingLabel'] as String? ?? '',
       progressTrailingLabel: map['progressTrailingLabel'] as String? ?? '',
+      endLabel: map['endLabel'] as String? ?? '',
       todaySpendable: map['todaySpendable'] as String? ?? '',
       monthlyRemaining: map['monthlyRemaining'] as String? ?? '',
       monthlySpent: map['monthlySpent'] as String? ?? '',

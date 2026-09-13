@@ -11,8 +11,8 @@
         android:id="@+id/widget_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HARU"
-        android:textColor="#6657B5"
+        android:text="DAYVE"
+        android:textColor="#7566E8"
         android:textSize="11sp"
         android:textStyle="bold" />
 
@@ -142,7 +142,7 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:text="＋ 지출"
-            android:textColor="#6657B5"
+            android:textColor="#7566E8"
             android:textSize="11sp"
             android:textStyle="bold" />
 
@@ -156,7 +156,7 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:text="일정"
-            android:textColor="#6657B5"
+            android:textColor="#7566E8"
             android:textSize="11sp"
             android:textStyle="bold" />
     </LinearLayout>

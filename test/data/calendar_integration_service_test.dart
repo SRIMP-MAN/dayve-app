@@ -21,7 +21,7 @@ void main() {
 
     expect(saved, isTrue);
     expect(adapter.calendarId, '7');
-    expect(adapter.title, 'HARU 야간근무');
+    expect(adapter.title, 'DAYVE 야간근무');
     expect(adapter.start, DateTime(2026, 9, 15, 20));
     expect(adapter.end, DateTime(2026, 9, 16, 8));
   });

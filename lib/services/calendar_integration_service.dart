@@ -51,8 +51,9 @@ class CalendarIntegrationService {
 
     return _adapter.addEvent(
       calendarId: calendar.id,
-      title:
-          entry.type == ScheduleEntryType.nightShift ? 'HARU 야간근무' : 'HARU 근무',
+      title: entry.type == ScheduleEntryType.nightShift
+          ? 'DAYVE 야간근무'
+          : 'DAYVE 근무',
       start: start,
       end: end,
     );

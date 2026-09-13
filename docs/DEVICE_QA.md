@@ -1,11 +1,11 @@
-# HARU Android 실제 단말 QA 체크리스트
+# DAYVE Android 실제 단말 QA 체크리스트
 
 ## 준비
 
 - [ ] Android 실제 단말에 최신 `app-debug.apk`를 설치한다.
 - [ ] 기존 데이터 영향이 없도록 앱 데이터 삭제 후 처음부터 시작한다.
 - [ ] 배터리 절약 모드와 일반 모드에서 각각 핵심 시나리오를 확인한다.
-- [ ] 홈 화면에 HARU Medium 위젯을 추가한다.
+- [ ] 홈 화면에 DAYVE Medium 위젯을 추가한다.
 - [ ] 테스트 중 시스템 시각을 변경했다면 마지막에 자동 날짜 및 시간을 다시 켠다.
 
 ## 기본 표시
@@ -54,13 +54,13 @@
 
 ## Android 16 Live Update / 삼성 Now Bar
 
-- [ ] Android 16(API 36) 이상 단말에서 HARU 알림 권한과 잠금화면 알림을 허용한다.
-- [ ] Galaxy에서는 `설정 > 잠금화면 및 AOD > Now Bar > Live notifications`에서 HARU를 켠다.
-- [ ] HARU의 `설정 > 잠금화면 실시간 정보`에서 시스템의 promoted notification 설정을 열 수 있는지 확인한다.
-- [ ] `설정 > 개발자 진단 > Live Update 진단`에서 Android 버전, 권한, 채널과 현재 HARU 상태가 표시된다.
+- [ ] Android 16(API 36) 이상 단말에서 DAYVE 알림 권한과 잠금화면 알림을 허용한다.
+- [ ] Galaxy에서는 `설정 > 잠금화면 및 AOD > Now Bar > Live notifications`에서 DAYVE를 켠다.
+- [ ] DAYVE의 `설정 > 잠금화면 실시간 정보`에서 시스템의 promoted notification 설정을 열 수 있는지 확인한다.
+- [ ] `설정 > 개발자 진단 > Live Update 진단`에서 Android 버전, 권한, 채널과 현재 DAYVE 상태가 표시된다.
 - [ ] 진단 정보 복사 후 메모 앱에 붙여 넣었을 때 각 항목이 한 줄씩 포함된다.
-- [ ] 근무 중에는 `HARU · 근무 중`, 퇴근까지 남은 시간, 진행률이 표시된다.
-- [ ] 퇴근 시각을 통과하면 앱을 열지 않아도 `HARU · 내 시간`으로 바뀌고 자유시간 진행률이 0%부터 시작한다.
+- [ ] 근무 중에는 `DAYVE · 근무 중`, 퇴근까지 남은 시간, 진행률이 표시된다.
+- [ ] 퇴근 시각을 통과하면 앱을 열지 않아도 `DAYVE · 내 시간`으로 바뀌고 자유시간 진행률이 0%부터 시작한다.
 - [ ] 잠금화면의 시스템 카운트다운이 앱을 열지 않아도 계속 감소한다.
 - [ ] 진행률은 매분 polling하지 않고 각 구간의 25%·50%·75%와 상태 전환 시점에 갱신된다.
 - [ ] 퇴근 시각 카드의 `퇴근했어`를 누르면 자유시간 상태로 즉시 바뀌고 홈 위젯도 갱신된다.
@@ -78,7 +78,7 @@
 
 ## 프로세스 종료와 재부팅
 
-- [ ] 최근 앱 목록에서 HARU를 제거한 뒤 다음 이벤트 시각까지 앱을 열지 않는다.
+- [ ] 최근 앱 목록에서 DAYVE를 제거한 뒤 다음 이벤트 시각까지 앱을 열지 않는다.
 - [ ] 이벤트 이후 위젯이 새 Snapshot으로 갱신된다.
 - [ ] 위젯이 표시된 상태에서 단말을 재부팅한다.
 - [ ] 재부팅 직후 마지막 Snapshot 또는 안전한 `갱신 중` 상태가 표시된다.
@@ -91,7 +91,7 @@
 adb shell dumpsys jobscheduler | findstr haru
 adb shell dumpsys appwidget | findstr HaruWidgetProvider
 adb shell dumpsys notification --noredact | findstr /i "haru_live_update promoted"
-adb logcat | findstr /i "WorkManager HARU"
+adb logcat | findstr /i "WorkManager DAYVE"
 ```
 
 - [ ] `HaruWidgetProvider`가 설치된 위젯 Provider로 등록되어 있다.

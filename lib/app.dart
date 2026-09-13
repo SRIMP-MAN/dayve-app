@@ -16,6 +16,7 @@ import 'domain/services/daily_spend_service.dart';
 import 'domain/services/schedule_entry_service.dart';
 import 'domain/services/time_engine.dart';
 import 'presentation/dashboard_tabs.dart';
+import 'presentation/dayve_design_tokens.dart';
 import 'presentation/haru_sheets.dart';
 import 'presentation/live_update_diagnostic_screen.dart';
 import 'services/calendar_integration_service.dart';
@@ -57,18 +58,9 @@ class _HaruAppState extends State<HaruApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '하루',
+      title: 'DAYVE',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xff7567c8),
-          brightness: Brightness.light,
-          surface: Colors.white,
-        ),
-        scaffoldBackgroundColor: const Color(0xfff8f6fc),
-        cardTheme: const CardThemeData(elevation: 0, margin: EdgeInsets.zero),
-      ),
+      theme: buildDayveTheme(),
       home: _settings == null
           ? OnboardingScreen(onComplete: _completeOnboarding)
           : DashboardScreen(
@@ -181,7 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('HARU', style: Theme.of(context).textTheme.labelLarge),
+              Text('DAYVE', style: Theme.of(context).textTheme.labelLarge),
               const SizedBox(height: 24),
               LinearProgressIndicator(value: (_step + 1) / 4),
               const SizedBox(height: 32),
@@ -1061,7 +1053,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       final accepted = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-          title: const Text('잠금화면에서도 HARU를 볼까요?'),
+          title: const Text('잠금화면에서도 DAYVE를 볼까요?'),
           content: const Text(
             '퇴근까지 남은 시간과\n'
             '오늘의 흐름을 잠금해제 없이 확인할 수 있어요.',
@@ -1787,7 +1779,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         children: [
           const ListTile(
             title: Text('Calendar 선택'),
-            subtitle: Text('HARU 일정만 직접 추가합니다.'),
+            subtitle: Text('DAYVE 일정만 직접 추가합니다.'),
           ),
           for (final calendar in calendars)
             ListTile(
@@ -1886,11 +1878,8 @@ class _DashboardScreenState extends State<DashboardScreen>
         ),
       ),
       bottomNavigationBar: NavigationBar(
-        height: 62,
         selectedIndex: _selectedTabIndex,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        backgroundColor: Colors.white,
-        indicatorColor: const Color(0xffe9e3fa),
         onDestinationSelected: (index) {
           if (_selectedTabIndex != index) {
             setState(() => _selectedTabIndex = index);

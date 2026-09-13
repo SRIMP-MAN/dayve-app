@@ -12,8 +12,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="HARU · 오늘의 일과"
-        android:textColor="#6657B5"
+        android:text="DAYVE · 오늘의 일과"
+        android:textColor="#7566E8"
         android:textSize="13sp"
         android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="90%"
-            android:textColor="#6657B5"
+            android:textColor="#7566E8"
             android:textSize="13sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -68,8 +68,8 @@
             android:indeterminate="false"
             android:max="100"
             android:progress="50"
-            android:progressBackgroundTint="#E8E3F4"
-            android:progressTint="#7565C8" />
+            android:progressBackgroundTint="#EAE6FA"
+            android:progressTint="#9C8CFF" />
 
         <ImageView
             android:layout_width="18dp"
@@ -106,86 +106,14 @@
             android:textSize="9sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/notification_money_section"
+    <TextView
+        android:id="@+id/notification_expanded_end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#EAE6F1" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="오늘 써도 되는 돈"
-            android:textColor="#777382"
-            android:textSize="10sp" />
-
-        <TextView
-            android:id="@+id/notification_today_spendable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="31,578원"
-            android:textColor="#242033"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="이번 달 남음"
-                    android:textColor="#8B8792"
-                    android:textSize="9sp" />
-
-                <TextView
-                    android:id="@+id/notification_monthly_remaining"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="600,000원"
-                    android:textColor="#3A3547"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="누적 사용"
-                    android:textColor="#8B8792"
-                    android:textSize="9sp" />
-
-                <TextView
-                    android:id="@+id/notification_monthly_spent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0원"
-                    android:textColor="#3A3547"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_marginTop="6dp"
+        android:gravity="end"
+        android:text="18:00 퇴근"
+        android:textColor="#7566E8"
+        android:textSize="10sp"
+        android:textStyle="bold" />
 </LinearLayout>

@@ -29,7 +29,7 @@ void main() {
     );
 
     expect(snapshot.state, 'working');
-    expect(snapshot.stateLabel, 'HARU · 근무 중');
+    expect(snapshot.stateLabel, 'DAYVE · 근무 중');
     expect(snapshot.headline, '2시간 · 퇴근까지');
     expect(snapshot.remainingMinutes, 120);
     expect(snapshot.progress, .75);
@@ -68,7 +68,7 @@ void main() {
     );
 
     expect(snapshot.state, 'dayOff');
-    expect(snapshot.stateLabel, 'HARU · 휴무');
+    expect(snapshot.stateLabel, 'DAYVE · 휴무');
     expect(snapshot.headline, '오늘은 쉬는 날');
   });
 

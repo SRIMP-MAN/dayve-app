@@ -47,7 +47,7 @@ class HaruWidgetProvider : HomeWidgetProvider() {
         rawSnapshot: String?,
     ) {
         if (rawSnapshot.isNullOrBlank()) {
-            views.setTextViewText(R.id.widget_state, "HARU")
+            views.setTextViewText(R.id.widget_state, "DAYVE")
             views.setTextViewText(R.id.widget_headline, "앱을 열어 하루를 시작해 주세요")
             views.setViewVisibility(R.id.widget_budget_section, View.GONE)
             views.setViewVisibility(R.id.widget_progress_section, View.GONE)
@@ -90,7 +90,7 @@ class HaruWidgetProvider : HomeWidgetProvider() {
                 views.setTextViewText(R.id.widget_updated, snapshot.optString("updatedLabel"))
             }
             .onFailure {
-                views.setTextViewText(R.id.widget_state, "HARU")
+                views.setTextViewText(R.id.widget_state, "DAYVE")
                 views.setTextViewText(R.id.widget_headline, "위젯 정보를 새로고침해 주세요")
                 views.setViewVisibility(R.id.widget_budget_section, View.GONE)
                 views.setViewVisibility(R.id.widget_progress_section, View.GONE)
@@ -99,7 +99,7 @@ class HaruWidgetProvider : HomeWidgetProvider() {
     }
 
     private fun bindStale(views: RemoteViews) {
-        views.setTextViewText(R.id.widget_state, "HARU · 갱신 중")
+        views.setTextViewText(R.id.widget_state, "DAYVE · 갱신 중")
         views.setTextViewText(R.id.widget_headline, "최신 정보를 불러오고 있어요")
         views.setViewVisibility(R.id.widget_budget_section, View.GONE)
         views.setViewVisibility(R.id.widget_progress_section, View.GONE)

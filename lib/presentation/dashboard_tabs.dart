@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../domain/models/daily_spend.dart';
-import 'haru_progress_gauge.dart';
+import 'dayve_design_tokens.dart';
+import 'work_progress_card.dart';
 
 class HaruTodayTab extends StatelessWidget {
   const HaruTodayTab({
@@ -35,15 +36,15 @@ class HaruTodayTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       key: const Key('today_tab'),
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+      padding: const EdgeInsets.fromLTRB(18, 4, 18, 20),
       children: [
         Text(
           dateLabel,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xff777382),
+                color: DayveColors.secondaryText,
               ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: DayveSpacing.sm),
         HaruTimeArea(
           state: state,
           value: timeValue,
@@ -54,7 +55,7 @@ class HaruTodayTab extends StatelessWidget {
           overrideLabel: overrideLabel,
           onScheduleTap: onScheduleTap,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: DayveSpacing.sm),
         _TodayBudgetCard(
           recommended: recommendedBudget,
           onSpendTap: onSpendTap,
@@ -188,98 +189,15 @@ class HaruTimeArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xffe9e3fa),
-      borderRadius: BorderRadius.circular(24),
-      child: InkWell(
-        key: const Key('dashboard_time_area'),
-        onTap: onScheduleTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'HARU · $state',
-                    style: const TextStyle(
-                      color: Color(0xff6657b5),
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const Spacer(),
-                  const Icon(
-                    Icons.edit_calendar_outlined,
-                    size: 20,
-                    color: Color(0xff6657b5),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Text(
-                caption,
-                style: const TextStyle(
-                  color: Color(0xff4f4a59),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 5),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  value,
-                  style: const TextStyle(
-                    color: Color(0xff24222d),
-                    fontSize: 40,
-                    height: 1,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -1.5,
-                  ),
-                ),
-              ),
-              if (progress != null) ...[
-                const SizedBox(height: 14),
-                HaruProgressGauge(
-                  progress: progress!,
-                  label: progressLabel!,
-                ),
-              ],
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  if (overrideLabel != null)
-                    Expanded(
-                      child: Text(
-                        overrideLabel!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color(0xff6657b5),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    )
-                  else
-                    const Spacer(),
-                  if (nextEvent != null)
-                    Text(
-                      nextEvent!,
-                      style: const TextStyle(
-                        color: Color(0xff777382),
-                        fontSize: 12,
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+    return WorkProgressCard(
+      state: state,
+      value: value,
+      caption: caption,
+      nextEvent: nextEvent,
+      progress: progress,
+      progressLabel: progressLabel,
+      overrideLabel: overrideLabel,
+      onTap: onScheduleTap,
     );
   }
 }
@@ -299,9 +217,9 @@ class _TodayBudgetCard extends StatelessWidget {
       key: const Key('dashboard_money_area'),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xffebe7f1)),
+        color: DayveColors.card,
+        borderRadius: BorderRadius.circular(DayveRadii.medium),
+        border: Border.all(color: DayveColors.border),
       ),
       child: Row(
         children: [
@@ -312,7 +230,7 @@ class _TodayBudgetCard extends StatelessWidget {
                 const Text(
                   '오늘 써도 되는 돈',
                   style: TextStyle(
-                    color: Color(0xff6657b5),
+                    color: DayveColors.primaryPurple,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -323,7 +241,7 @@ class _TodayBudgetCard extends StatelessWidget {
                   child: Text(
                     recommended,
                     style: const TextStyle(
-                      color: Color(0xff24222d),
+                      color: DayveColors.primaryText,
                       fontSize: 27,
                       height: 1,
                       fontWeight: FontWeight.w800,

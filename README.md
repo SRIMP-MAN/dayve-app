@@ -1,4 +1,4 @@
-# 하루 (HARU)
+# DAYVE
 
 오늘 내게 남은 **시간과 돈**을 앱을 열지 않고 확인하는 생활 계기판.
 
@@ -13,7 +13,7 @@
 
 `C:\haru-app`
 
-Do not create HARU under `C:\mukking-app`.
+Do not create DAYVE under `C:\mukking-app`.
 
 ## Bootstrap
 

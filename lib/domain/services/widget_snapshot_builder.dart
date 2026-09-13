@@ -52,12 +52,12 @@ class WidgetSnapshotBuilder {
   }
 
   String _stateLabel(HaruDayState state) => switch (state) {
-        HaruDayState.beforeWork => 'HARU · 출근 전',
-        HaruDayState.working => 'HARU · 근무 중',
-        HaruDayState.afterWork => 'HARU · 퇴근 후',
-        HaruDayState.sleepWindow => 'HARU · 수면',
-        HaruDayState.dayOff => 'HARU · 휴무',
-        HaruDayState.exception => 'HARU · 일정 변경',
+        HaruDayState.beforeWork => 'DAYVE · 출근 전',
+        HaruDayState.working => 'DAYVE · 근무 중',
+        HaruDayState.afterWork => 'DAYVE · 퇴근 후',
+        HaruDayState.sleepWindow => 'DAYVE · 수면',
+        HaruDayState.dayOff => 'DAYVE · 휴무',
+        HaruDayState.exception => 'DAYVE · 일정 변경',
       };
 
   String _twoDigits(int value) => value.toString().padLeft(2, '0');

@@ -189,7 +189,7 @@ class LiveUpdateDiagnostic {
       case LiveUpdateRuntimeCapability.promoted:
         return '이 기기는 Promoted Live Update를 지원합니다.';
       case LiveUpdateRuntimeCapability.standard:
-        return '이 기기는 HARU 잠금화면 실시간 정보를 지원합니다.\n'
+        return '이 기기는 DAYVE 잠금화면 실시간 정보를 지원합니다.\n'
             '일반 알림 방식으로 표시됩니다.';
       case LiveUpdateRuntimeCapability.unsupported:
         return '잠금화면 실시간 정보를 사용하려면 알림 권한이 필요합니다.';
@@ -200,7 +200,7 @@ class LiveUpdateDiagnostic {
     String value(bool input) => input ? 'true' : 'false';
     String date(DateTime? input) => input?.toIso8601String() ?? 'n/a';
     return [
-      'HARU Live Update Diagnostic',
+      'DAYVE Live Update Diagnostic',
       'Android: $androidVersion',
       'SDK_INT: $sdkInt',
       'SDK_INT_FULL: ${sdkIntFull ?? 'unavailable'}',

@@ -95,7 +95,7 @@ void main() {
       'headline': '취침까지 04:12',
     });
 
-    expect(diagnostic.copyText, startsWith('HARU Live Update Diagnostic'));
+    expect(diagnostic.copyText, startsWith('DAYVE Live Update Diagnostic'));
     expect(diagnostic.copyText, contains('SDK_INT_FULL: 3600001'));
     expect(diagnostic.copyText, contains('Capability: promoted'));
     expect(diagnostic.copyText, contains('Promotable: true'));
