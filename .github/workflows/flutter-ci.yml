@@ -49,3 +49,10 @@ jobs:
 
       - name: Build Android debug APK
         run: flutter build apk --debug
+
+      - name: Upload DAYVE debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: dayve-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
