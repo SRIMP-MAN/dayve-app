@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 import '../data/local/settings_store.dart';
 import '../domain/models/app_settings.dart';
 import '../domain/models/live_update_snapshot.dart';
 import '../domain/models/live_update_diagnostic.dart';
-import '../domain/services/budget_engine.dart';
 import '../domain/services/live_update_planner.dart';
 import '../domain/services/schedule_entry_service.dart';
 
@@ -226,26 +224,10 @@ class HaruLiveUpdateService {
     if (!settings.lockScreenLiveEnabled) return _platform.disable();
     final current = now ?? DateTime.now();
     final schedules = ScheduleEntryService(_store);
-    final spends = _store.loadDailySpends();
-    final currency = NumberFormat.decimalPattern('ko_KR');
     final plan = _planner.plan(
       now: current,
       profile: settings.schedule,
       activeScheduleFor: (at) => schedules.activeFor(at, settings.schedule),
-      moneyFor: settings.lockScreenMoneyVisible
-          ? (at) {
-              final budget = const BudgetEngine().calculate(
-                now: at,
-                profile: settings.budget,
-                spends: spends,
-              );
-              return LiveUpdateMoneyLabels(
-                today: '${currency.format(budget.recommendedDailyAmount)}원',
-                remaining: '${currency.format(budget.remainingBudget)}원',
-                spent: '${currency.format(budget.spentAmount)}원',
-              );
-            }
-          : null,
     );
     return _platform.sync(plan);
   }

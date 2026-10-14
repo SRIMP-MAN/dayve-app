@@ -1,4 +1,4 @@
-package com.haruapp.haru_app
+package com.dayve.app
 
 import android.Manifest
 import android.app.AlarmManager
@@ -9,18 +9,17 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.view.View
 import android.widget.RemoteViews
 import org.json.JSONArray
 import org.json.JSONObject
 
 class HaruLiveUpdateManager(private val context: Context) {
     companion object {
-        const val ACTION_APPLY = "com.haruapp.haru_app.action.APPLY_LIVE_UPDATE"
+        const val ACTION_APPLY = "com.dayve.app.action.APPLY_LIVE_UPDATE"
         const val EXTRA_SNAPSHOT = "snapshot"
 
         private const val CHANNEL_ID = "haru_live_update"
@@ -29,8 +28,6 @@ class HaruLiveUpdateManager(private val context: Context) {
         private const val PLAN_KEY = "flutter_generated_plan"
         private const val ALARM_COUNT_KEY = "alarm_count"
         private const val ALARM_REQUEST_CODE = 7100
-        private const val PROMOTED_EXTRA = "android.requestPromotedOngoing"
-        private const val PROMOTED_FLAG = 0x00040000
         const val EXTRA_LIVE_ACTION = "haru_live_action"
         const val EXTRA_SCHEDULE_DATE = "haru_schedule_date"
     }
@@ -39,6 +36,19 @@ class HaruLiveUpdateManager(private val context: Context) {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val preferences = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private val catPositionIds = intArrayOf(
+        R.id.notification_cat_position_0,
+        R.id.notification_cat_position_1,
+        R.id.notification_cat_position_2,
+        R.id.notification_cat_position_3,
+        R.id.notification_cat_position_4,
+        R.id.notification_cat_position_5,
+        R.id.notification_cat_position_6,
+        R.id.notification_cat_position_7,
+        R.id.notification_cat_position_8,
+        R.id.notification_cat_position_9,
+        R.id.notification_cat_position_10,
+    )
 
     fun sync(arguments: Any?): Map<String, Any> {
         val plan = asJsonObject(arguments) ?: return capability("unsupported")
@@ -93,18 +103,12 @@ class HaruLiveUpdateManager(private val context: Context) {
             "mode" to resolvedMode,
             "androidApi" to Build.VERSION.SDK_INT,
             "supportsLiveUpdate" to notificationsEnabled(),
-            "canPromote" to canPromote(),
+            "canPromote" to false,
             "notificationsEnabled" to notificationsEnabled(),
         )
     }
 
-    fun openPromotionSettings(): Boolean {
-        if (!isApi361OrAbove()) return false
-        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_PROMOTION_SETTINGS).apply {
-            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-        }
-        return openSettingsIntent(intent)
-    }
+    fun openPromotionSettings(): Boolean = false
 
     fun openNotificationSettings(): Boolean {
         return openSettingsIntent(notificationSettingsIntent())
@@ -131,44 +135,18 @@ class HaruLiveUpdateManager(private val context: Context) {
         }
 
         createChannel()
-        val promotionAvailable = isApi361OrAbove() && canPromote()
-        val promotedCandidate = if (promotionAvailable) {
-            buildNotification(
-                snapshot,
-                endsAt,
-                requestPromotion = true,
-                useCustomViews = false,
-            )
-        } else {
-            null
-        }
-        val promotable = promotedCandidate != null &&
-            runCatching {
-                promotedCandidate.hasPromotableCharacteristics()
-            }.getOrDefault(false)
-        val notification = if (promotable && promotedCandidate != null) {
-            promotedCandidate
-        } else {
-            buildNotification(
-                snapshot,
-                endsAt,
-                requestPromotion = false,
-                useCustomViews = true,
-            )
-        }
+        val notification = buildNotification(snapshot, endsAt)
         runCatching { notificationManager.notify(NOTIFICATION_ID, notification) }
             .onFailure {
                 cancelNotification()
                 return "unsupported"
             }
-        return if (promotable) "promoted" else "standard"
+        return "standard"
     }
 
     private fun buildNotification(
         snapshot: JSONObject,
         endsAt: Long,
-        requestPromotion: Boolean,
-        useCustomViews: Boolean,
     ): Notification {
         val title = snapshot.optString("title", "DAYVE")
         val headline = snapshot.optString("headline", snapshot.optString("body", ""))
@@ -196,15 +174,6 @@ class HaruLiveUpdateManager(private val context: Context) {
             .setOnlyAlertOnce(true)
             .setShowWhen(true)
             .setWhen(endsAt)
-
-        if (requestPromotion && snapshot.optBoolean("showMoney", false)) {
-            val todayBudget = snapshot.optString("todayBudgetLabel", "")
-            val remainingBudget = snapshot.optString("remainingBudgetLabel", "")
-            val promotedMoneyText = listOf(todayBudget, remainingBudget)
-                .filter { it.isNotBlank() }
-                .joinToString(" · ")
-            if (promotedMoneyText.isNotBlank()) builder.setSubText(promotedMoneyText)
-        }
 
         if (snapshot.optBoolean("showCheckoutActions", false)) {
             val scheduleDate = snapshot.optString("scheduleDate", "")
@@ -235,31 +204,11 @@ class HaruLiveUpdateManager(private val context: Context) {
             builder.setUsesChronometer(true).setChronometerCountDown(true)
         }
 
-        if (requestPromotion && Build.VERSION.SDK_INT >= 36) {
-            val style = Notification.ProgressStyle()
-                .addProgressSegment(
-                    Notification.ProgressStyle.Segment(100)
-                        .setColor(Color.rgb(117, 102, 232)),
-                )
-                .setProgress(progress)
-                .setStyledByProgress(true)
-                .setProgressTrackerIcon(
-                    Icon.createWithResource(context, R.drawable.haru_pixel_cat),
-                )
-            builder.setStyle(style)
-            if (requestPromotion) {
-                builder.extras.putBoolean(PROMOTED_EXTRA, true)
-            }
-        } else {
-            builder.setProgress(100, progress, false)
-            if (useCustomViews) {
-                val (collapsed, expanded) = customViews(snapshot, progress)
-                builder.setCustomContentView(collapsed)
-                builder.setCustomBigContentView(expanded)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    builder.setStyle(Notification.DecoratedCustomViewStyle())
-                }
-            }
+        val (collapsed, expanded) = customViews(snapshot, progress)
+        builder.setCustomContentView(collapsed)
+        builder.setCustomBigContentView(expanded)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            builder.setStyle(Notification.DecoratedCustomViewStyle())
         }
 
         val remaining = (endsAt - System.currentTimeMillis()).coerceAtLeast(0L)
@@ -273,46 +222,69 @@ class HaruLiveUpdateManager(private val context: Context) {
         snapshot: JSONObject,
         progress: Int,
     ): Pair<RemoteViews, RemoteViews> {
-        val title = snapshot.optString("title", "DAYVE")
         val headline = snapshot.optString("headline", snapshot.optString("body", ""))
-        val stateLabel = snapshot.optString("stateLabel", "")
-        val stateAndHeadline = listOf(stateLabel, headline)
-            .filter { it.isNotBlank() }
-            .joinToString(" · ")
 
         val collapsed = RemoteViews(
             context.packageName,
             R.layout.haru_notification_collapsed,
         ).apply {
-            setTextViewText(R.id.notification_collapsed_title, title)
+            setTextViewText(
+                R.id.notification_collapsed_title,
+                "DAYVE · 오늘의 일과",
+            )
             setTextViewText(
                 R.id.notification_collapsed_headline,
                 "$headline · 진행률 $progress%",
             )
-            setProgressBar(R.id.notification_collapsed_progress, 100, progress, false)
+            setTextViewText(R.id.notification_collapsed_percent, "$progress%")
+            setProgressBar(
+                R.id.notification_collapsed_progress,
+                100,
+                progress,
+                false,
+            )
         }
 
         val expanded = RemoteViews(
             context.packageName,
-            R.layout.haru_notification_expanded,
+            R.layout.lockscreen_dayve,
         ).apply {
-            setTextViewText(R.id.notification_expanded_state, stateAndHeadline)
             setTextViewText(R.id.notification_expanded_percent, "$progress%")
-            setProgressBar(R.id.notification_expanded_progress, 100, progress, false)
+            setTextViewText(
+                R.id.notification_expanded_encouragement,
+                snapshot.optString("progressTrailingLabel", ""),
+            )
+            setProgressBar(
+                R.id.notification_expanded_progress,
+                100,
+                progress,
+                false,
+            )
+            bindCatPosition(this, progress)
             setTextViewText(
                 R.id.notification_expanded_leading,
                 snapshot.optString("progressLeadingLabel", ""),
             )
             setTextViewText(
-                R.id.notification_expanded_trailing,
-                snapshot.optString("progressTrailingLabel", headline),
-            )
-            setTextViewText(
                 R.id.notification_expanded_end,
-                snapshot.optString("endLabel", ""),
+                headline,
             )
         }
         return collapsed to expanded
+    }
+
+    private fun bindCatPosition(views: RemoteViews, progress: Int) {
+        val selected = PixelCatPosition.indexFor(progress)
+        val density = context.resources.displayMetrics.density
+        catPositionIds.forEachIndexed { index, id ->
+            val translationPx = PixelCatPosition.translationDpFor(
+                index,
+                catSizeDp = 40f,
+                minimumTrackWidthDp = PixelCatPosition.NOTIFICATION_MIN_TRACK_DP,
+            ) * density
+            views.setFloat(id, "setTranslationX", translationPx)
+            views.setViewVisibility(id, if (index == selected) View.VISIBLE else View.GONE)
+        }
     }
 
     fun diagnostics(): Map<String, Any?> {
@@ -331,12 +303,7 @@ class HaruLiveUpdateManager(private val context: Context) {
         }
         val endTime = snapshotEndTime(diagnosticSnapshot).takeIf { it > 0L }
             ?: now + 60 * 60 * 1000L
-        val promotedBuilt = buildNotification(
-            diagnosticSnapshot,
-            endTime,
-            requestPromotion = isApi361OrAbove(),
-            useCustomViews = false,
-        )
+        val built = buildNotification(diagnosticSnapshot, endTime)
         val active = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             runCatching {
                 notificationManager.activeNotifications
@@ -347,22 +314,6 @@ class HaruLiveUpdateManager(private val context: Context) {
             null
         }
         val sdkFull = sdkIntFull()
-        val canPostPromoted = canPromote()
-        val hasPromotable = isApi361OrAbove() &&
-            runCatching {
-                promotedBuilt.hasPromotableCharacteristics()
-            }.getOrDefault(false)
-        val usingPromotedRenderer = canPostPromoted && hasPromotable
-        val built = if (usingPromotedRenderer) {
-            promotedBuilt
-        } else {
-            buildNotification(
-                diagnosticSnapshot,
-                endTime,
-                requestPromotion = false,
-                useCustomViews = true,
-            )
-        }
         val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.getNotificationChannel(CHANNEL_ID)
         } else {
@@ -395,20 +346,16 @@ class HaruLiveUpdateManager(private val context: Context) {
             "postNotificationsGranted" to postNotificationsGranted(),
             "notificationsEnabled" to notificationsEnabled(),
             "promotedPermissionDeclared" to promotedPermissionDeclared(),
-            "promotedUserAllowed" to canPostPromoted,
-            "canPostPromotedNotifications" to canPostPromoted,
-            "hasPromotableCharacteristics" to hasPromotable,
-            "currentlyPromoted" to (
-                active != null && (active.flags and PROMOTED_FLAG) != 0
-            ),
+            "promotedUserAllowed" to false,
+            "canPostPromotedNotifications" to false,
+            "hasPromotableCharacteristics" to false,
+            "currentlyPromoted" to false,
             "ongoing" to ((built.flags and Notification.FLAG_ONGOING_EVENT) != 0),
             "hasContentTitle" to !title.isNullOrBlank(),
-            "notificationStyle" to when {
-                usingPromotedRenderer -> "ProgressStyle"
-                template != null -> template.substringAfterLast('.').substringBefore('$')
-                else -> "Standard progress"
-            },
-            "progressStyle" to usingPromotedRenderer,
+            "notificationStyle" to (template
+                ?.substringAfterLast('.')
+                ?.substringBefore('$') ?: "DAYVE Custom RemoteViews"),
+            "progressStyle" to false,
             "customRemoteViews" to hasCustomViews,
             "colorized" to built.extras.getBoolean(Notification.EXTRA_COLORIZED, false),
             "channelId" to CHANNEL_ID,
@@ -431,13 +378,7 @@ class HaruLiveUpdateManager(private val context: Context) {
             "nextScheduledRefreshMillis" to nextRefresh,
             "canOpenNotificationSettings" to canResolveNotificationSettings(),
             "canOpenLockScreenSettings" to canResolveNotificationSettings(),
-            "canOpenPromotionSettings" to (
-                isApi361OrAbove() && canResolve(
-                    Intent(Settings.ACTION_APP_NOTIFICATION_PROMOTION_SETTINGS).apply {
-                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                    },
-                )
-            ),
+            "canOpenPromotionSettings" to false,
         )
     }
 
@@ -475,11 +416,6 @@ class HaruLiveUpdateManager(private val context: Context) {
                 .getField("BAKLAVA_1")
                 .getInt(null)
         }.getOrDefault(3_600_001)
-    }
-
-    private fun isApi361OrAbove(): Boolean {
-        val sdkFull = sdkIntFull() ?: return false
-        return sdkFull >= baklavaOneFullCode()
     }
 
     private fun promotedPermissionDeclared(): Boolean {
@@ -557,7 +493,7 @@ class HaruLiveUpdateManager(private val context: Context) {
         requestCode: Int,
     ): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
-            this.action = "com.haruapp.haru_app.action.LIVE_UPDATE_$action"
+            this.action = "com.dayve.app.action.LIVE_UPDATE_$action"
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(EXTRA_LIVE_ACTION, action)
             putExtra(EXTRA_SCHEDULE_DATE, scheduleDate)
@@ -647,12 +583,6 @@ class HaruLiveUpdateManager(private val context: Context) {
             }
         }
         return true
-    }
-
-    private fun canPromote(): Boolean {
-        if (!isApi361OrAbove() || !notificationsEnabled()) return false
-        return runCatching { notificationManager.canPostPromotedNotifications() }
-            .getOrDefault(false)
     }
 
     private fun cancelNotification() {

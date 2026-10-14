@@ -38,7 +38,7 @@ void main() {
     expect(plan.current.snapshot.progressPercent, 33);
     expect(plan.current.snapshot.startTime, DateTime(2026, 9, 11, 9));
     expect(plan.current.snapshot.endsAt, DateTime(2026, 9, 11, 18));
-    expect(plan.current.snapshot.endLabel, '18:00 퇴근');
+    expect(plan.current.snapshot.endLabel, '퇴근 18:00');
     expect(plan.current.snapshot.updatedAt, DateTime(2026, 9, 11, 12));
   });
 
@@ -54,7 +54,7 @@ void main() {
     expect(plan.current.snapshot.title, 'DAYVE · 내 시간');
     expect(plan.current.snapshot.headline, '취침까지 03:00');
     expect(plan.current.snapshot.progressPercent, 40);
-    expect(plan.current.snapshot.endLabel, '23:00 취침');
+    expect(plan.current.snapshot.endLabel, '취침 23:00');
   });
 
   test('before-work live notification is hidden', () {
@@ -160,7 +160,7 @@ void main() {
     );
     expect(
       platform.lastPlan?.current.snapshot.progressTrailingLabel,
-      '퇴근까지 06:00',
+      '오후도 화이팅!',
     );
   });
 
@@ -222,8 +222,7 @@ void main() {
     expect(platform.lastPlan, isNotNull);
   });
 
-  test('money stays hidden by default and is included only after opt-in',
-      () async {
+  test('monthly money is excluded from lock-screen snapshots', () async {
     final hiddenPlatform = _FakeLiveUpdatePlatform(
       const LiveUpdatePlatformResult(
         delivery: LiveUpdateDelivery.standard,
@@ -233,8 +232,7 @@ void main() {
     );
     await _syncWith(hiddenPlatform, DateTime(2026, 9, 11, 12));
     expect(hiddenPlatform.lastPlan?.current.snapshot.showMoney, isFalse);
-    expect(hiddenPlatform.lastPlan?.current.snapshot.todaySpendable, isEmpty);
-    expect(hiddenPlatform.lastPlan?.current.snapshot.todayBudgetLabel, isEmpty);
+    expect(hiddenPlatform.lastPlan?.current.snapshot.monthlyRemaining, isEmpty);
 
     final visiblePlatform = _FakeLiveUpdatePlatform(hiddenPlatform.result);
     await _syncWith(
@@ -242,19 +240,15 @@ void main() {
       DateTime(2026, 9, 11, 12),
       showMoney: true,
     );
-    expect(visiblePlatform.lastPlan?.current.snapshot.showMoney, isTrue);
+    expect(visiblePlatform.lastPlan?.current.snapshot.showMoney, isFalse);
     expect(
-        visiblePlatform.lastPlan?.current.snapshot.todaySpendable, '30,000원');
-    expect(visiblePlatform.lastPlan?.current.snapshot.monthlyRemaining,
-        '600,000원');
-    expect(visiblePlatform.lastPlan?.current.snapshot.monthlySpent, '0원');
-    expect(
-      visiblePlatform.lastPlan?.current.snapshot.todayBudgetLabel,
-      contains('오늘'),
-    );
+        visiblePlatform.lastPlan?.current.snapshot.monthlyRemaining, isEmpty);
+    expect(visiblePlatform.lastPlan?.current.snapshot.monthlySpent, isEmpty);
+    expect(visiblePlatform.lastPlan?.current.snapshot.monthlyBudget, isEmpty);
+    expect(visiblePlatform.lastPlan?.current.snapshot.monthlyUsagePercent, 0);
     expect(
       visiblePlatform.lastPlan?.current.snapshot.remainingBudgetLabel,
-      contains('이번 달'),
+      isEmpty,
     );
   });
 
@@ -273,56 +267,74 @@ void main() {
       'showMoney': true,
       'stateLabel': '근무 중',
       'progressLeadingLabel': '오전은 수고했어요',
-      'progressTrailingLabel': '퇴근까지 01:19',
-      'endLabel': '18:00 퇴근',
-      'todaySpendable': '31,578원',
+      'progressTrailingLabel': '오후도 화이팅!',
+      'endLabel': '퇴근 18:00',
+      'monthlyBudget': '1,000,000원',
       'monthlyRemaining': '600,000원',
-      'monthlySpent': '0원',
+      'monthlySpent': '400,000원',
+      'monthlyUsagePercent': 40,
     });
     final restored = LiveUpdateSnapshot.fromMap(snapshot.toMap());
 
     expect(restored.progressPercent, 90);
     expect(restored.stateLabel, '근무 중');
-    expect(restored.endLabel, '18:00 퇴근');
-    expect(restored.todaySpendable, '31,578원');
+    expect(restored.endLabel, '퇴근 18:00');
+    expect(restored.monthlyBudget, '1,000,000원');
     expect(restored.monthlyRemaining, '600,000원');
-    expect(restored.monthlySpent, '0원');
+    expect(restored.monthlySpent, '400,000원');
+    expect(restored.monthlyUsagePercent, 40);
+    expect(restored.toMap(), isNot(contains('todaySpendable')));
+    expect(restored.toMap(), isNot(contains('todayBudgetLabel')));
   });
 
-  test('standard expanded notification excludes budget content', () {
+  test('standard expanded notification mirrors DAYVE home summary', () {
     final layout = File(
-      'android/app/src/main/res/layout/haru_notification_expanded.xml',
+      'android/app/src/main/res/layout/lockscreen_dayve.xml',
+    ).readAsStringSync();
+    final collapsedLayout = File(
+      'android/app/src/main/res/layout/haru_notification_collapsed.xml',
     ).readAsStringSync();
 
+    expect(layout, contains('오늘의 하루 진행률'));
     expect(layout, contains('notification_expanded_progress'));
+    expect(collapsedLayout, contains('notification_collapsed_progress'));
+    expect(layout, contains('@drawable/dayve_notification_progress'));
+    expect(
+      collapsedLayout,
+      contains('@drawable/dayve_notification_progress'),
+    );
+    expect(layout, isNot(contains('notification_expanded_segment_')));
+    expect(collapsedLayout, isNot(contains('notification_collapsed_segment_')));
     expect(layout, contains('notification_expanded_end'));
-    expect(layout, isNot(contains('notification_money_section')));
+    expect(layout, isNot(contains('notification_monthly_section')));
+    expect(layout, contains('@drawable/dayve_pixel_cat'));
+    expect(layout, isNot(contains('android:translationX="-6dp"')));
+    expect(layout, contains('android:translationY="3dp"'));
+    expect(layout, contains('@drawable/dayve_notification_progress_panel'));
+    expect(layout, contains('progressBarStyleHorizontal'));
+    expect(collapsedLayout, contains('progressBarStyleHorizontal'));
     expect(layout, isNot(contains('notification_today_spendable')));
+    expect(layout, isNot(contains('오늘 써도 되는 돈')));
   });
 
-  test('promoted renderer remains ProgressStyle without custom views', () {
+  test('renderer always uses DAYVE custom RemoteViews', () {
     final manager = File(
-      'android/app/src/main/kotlin/com/haruapp/haru_app/'
+      'android/app/src/main/kotlin/com/dayve/app/'
       'HaruLiveUpdateManager.kt',
     ).readAsStringSync();
+    final manifest = File(
+      'android/app/src/main/AndroidManifest.xml',
+    ).readAsStringSync();
 
-    expect(manager, contains('Notification.ProgressStyle()'));
-    expect(
-      manager,
-      matches(
-        RegExp(
-          r'requestPromotion = true,\s+useCustomViews = false',
-        ),
-      ),
-    );
-    expect(
-      manager,
-      matches(
-        RegExp(
-          r'requestPromotion = false,\s+useCustomViews = true',
-        ),
-      ),
-    );
+    expect(manager, contains('R.layout.haru_notification_collapsed'));
+    expect(manager, contains('R.layout.lockscreen_dayve'));
+    expect(manager, contains('notification_expanded_progress'));
+    expect(manager, contains('notification_collapsed_progress'));
+    expect(manager, contains('setProgressBar('));
+    expect(manager, contains('setCustomBigContentView(expanded)'));
+    expect(manager, isNot(contains('Notification.ProgressStyle()')));
+    expect(manager, isNot(contains('requestPromotion = true')));
+    expect(manifest, isNot(contains('POST_PROMOTED_NOTIFICATIONS')));
   });
 }
 

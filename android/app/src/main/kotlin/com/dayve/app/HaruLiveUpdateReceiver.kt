@@ -1,4 +1,4 @@
-package com.haruapp.haru_app
+package com.dayve.app
 
 import android.content.BroadcastReceiver
 import android.content.Context

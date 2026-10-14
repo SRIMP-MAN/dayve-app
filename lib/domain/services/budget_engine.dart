@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import '../models/budget_profile.dart';
 import '../models/budget_summary.dart';
 import '../models/daily_spend.dart';
@@ -18,23 +20,18 @@ class BudgetEngine {
             e.date.isBefore(cycle.endExclusive))
         .fold<int>(0, (sum, e) => sum + e.amount);
 
-    final remainingBudget = profile.cycleBudget - spent;
+    final remainingBudget = math.max(profile.cycleBudget - spent, 0);
 
     final today = DateTime(now.year, now.month, now.day);
     final lastDay = cycle.endExclusive.subtract(const Duration(days: 1));
     final remainingDays = lastDay.difference(today).inDays + 1;
     final safeRemainingDays = remainingDays < 1 ? 1 : remainingDays;
 
-    final recommended = remainingBudget <= 0
-        ? 0
-        : (remainingBudget / safeRemainingDays).floor();
-
     return BudgetSummary(
       cycleBudget: profile.cycleBudget,
       spentAmount: spent,
       remainingBudget: remainingBudget,
       remainingDays: safeRemainingDays,
-      recommendedDailyAmount: recommended,
     );
   }
 

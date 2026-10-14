@@ -4,12 +4,15 @@ class BudgetSummary {
     required this.spentAmount,
     required this.remainingBudget,
     required this.remainingDays,
-    required this.recommendedDailyAmount,
   });
 
   final int cycleBudget;
   final int spentAmount;
   final int remainingBudget;
   final int remainingDays;
-  final int recommendedDailyAmount;
+
+  double get usageRatio =>
+      cycleBudget <= 0 ? 0 : (spentAmount / cycleBudget).clamp(0.0, 1.0);
+
+  double get usagePercent => usageRatio * 100;
 }

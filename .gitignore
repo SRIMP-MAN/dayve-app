@@ -8,9 +8,13 @@ build/
 .vscode/
 *.iml
 *.jks
+*.keystore
+*.p12
+*.pfx
 key.properties
 .env
 .env.*
+!.env.example
 android/local.properties
 ios/Flutter/ephemeral/
 .DS_Store

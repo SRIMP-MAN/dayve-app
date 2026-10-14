@@ -1,6 +1,6 @@
-# HARU Project Scope
+# DAYVE Project Scope
 
-This repository is the HARU application.
+This repository is the DAYVE application. Read docs/DEVELOPMENT_HANDOFF.md before continuing work on a new computer.
 
 ## Safety boundary
 Work only inside this repository.
@@ -12,12 +12,12 @@ Do NOT read, edit, move, delete, or modify files in:
 Before modifying files, confirm the current working directory belongs to HARU.
 
 ## Product
-HARU is a local-first Flutter app that shows:
+DAYVE is a local-first Flutter app that shows:
 - time remaining until work ends
 - free time remaining after work
 - sleep time available if the user sleeps now
 - monthly discretionary budget remaining
-- recommended spendable amount for today
+- actual spending history (do not restore the removed daily spendable recommendation UI)
 
 The app should minimize foreground use. Prefer widgets, notifications, and quick actions.
 
@@ -37,10 +37,12 @@ The app should minimize foreground use. Prefer widgets, notifications, and quick
 - Do not add dependencies without a clear need
 
 ## Naming
-- Repository: haru-app
+- Repository: SRIMP-MAN/dayve-app (local directory C:\haru-app)
 - Flutter project: haru_app
-- Display name: 하루
-- English brand: HARU
+- Display name: DAYVE
+- English brand: DAYVE
+- Android applicationId / namespace: com.dayve.app
+- Keep existing HARU internal class names and storage keys unless a migration is explicitly requested.
 - Storage prefix: haru.v1.
 - Notification channel prefix: haru_
 - Deep link prefix reserved: haru://

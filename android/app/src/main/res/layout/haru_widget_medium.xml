@@ -2,125 +2,208 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/haru_widget_background"
     android:orientation="vertical"
-    android:padding="13dp">
+    android:paddingStart="7dp"
+    android:paddingTop="7dp"
+    android:paddingEnd="7dp"
+    android:paddingBottom="12dp">
 
     <TextView
         android:id="@+id/widget_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DAYVE"
-        android:textColor="#7566E8"
-        android:textSize="11sp"
+        android:text="DAYVE · 근무 중"
+        android:textColor="#6E5DE3"
+        android:textSize="10sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/widget_headline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="오늘 내게 남은 시간"
-        android:textColor="#1A1B22"
-        android:textSize="20sp"
+        android:text="퇴근까지 4시간 22분"
+        android:textColor="#17141F"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/widget_progress_section"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:layout_marginTop="3dp">
-
-        <ProgressBar
-            android:id="@+id/widget_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="7dp"
-            android:layout_gravity="center_vertical"
-            android:max="1000"
-            android:progressDrawable="@drawable/haru_widget_progress" />
+        android:layout_height="47dp"
+        android:layout_marginTop="1dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="14dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView android:id="@+id/widget_progress_cat_0" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:contentDescription="진행 위치" android:src="@drawable/haru_pixel_cat" />
-            <ImageView android:id="@+id/widget_progress_cat_1" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_2" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_3" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_4" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_5" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_6" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_7" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_8" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_9" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
-            <ImageView android:id="@+id/widget_progress_cat_10" android:layout_width="0dp" android:layout_height="20dp" android:layout_weight="1" android:src="@drawable/haru_pixel_cat" android:visibility="invisible" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="오늘의 하루 진행률"
+                android:textColor="#6E5DE3"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_progress_percent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dayve_notification_badge"
+                android:paddingStart="7dp"
+                android:paddingTop="1dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="1dp"
+                android:text="47%"
+                android:textColor="#6E5DE3"
+                android:textSize="9sp"
+                android:textStyle="bold" />
         </LinearLayout>
-    </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="33dp"
+            android:clipChildren="false">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/dayve_widget_gauge_outer"
+                android:padding="2dp">
+
+                <ProgressBar
+                    android:id="@+id/widget_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/dayve_notification_progress" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:translationY="2dp">
+
+                <LinearLayout android:id="@+id/widget_progress_cat_0" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="0" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:contentDescription="오늘 하루를 밀어주는 DAYVE 고양이" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="10" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_1" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="9" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_2" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="2" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="8" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_3" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="3" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="7" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_4" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="4" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="6" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_5" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="5" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="5" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_6" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="6" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="4" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_7" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="7" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="3" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_8" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="8" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="2" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_9" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="9" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" /></LinearLayout>
+                <LinearLayout android:id="@+id/widget_progress_cat_10" android:layout_width="match_parent" android:layout_height="34dp" android:gravity="center_vertical" android:orientation="horizontal" android:visibility="gone"><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="10" /><ImageView android:layout_width="34dp" android:layout_height="34dp" android:scaleType="fitCenter" android:src="@drawable/dayve_pixel_cat" /><FrameLayout android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="0" /></LinearLayout>
+            </FrameLayout>
+        </FrameLayout>
+
+        <TextView android:id="@+id/widget_progress_leading" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+        <TextView android:id="@+id/widget_progress_trailing" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/widget_section_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="0dp"
+        android:background="#1A6E5DE3" />
 
     <LinearLayout
         android:id="@+id/widget_budget_section"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="오늘"
-                android:textColor="#70717A"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/widget_daily_budget"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0원"
-                android:textColor="#1A1B22"
-                android:textSize="16sp"
+                android:layout_weight="1"
+                android:text="이번 달 소비 현황"
+                android:textColor="#6E5DE3"
+                android:textSize="9sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_monthly_usage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이번 달 33% 사용 중"
+                android:textColor="#817C90"
+                android:textSize="8sp" />
         </LinearLayout>
 
+        <ProgressBar
+            android:id="@+id/widget_monthly_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="1dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/dayve_widget_monthly_progress" />
+
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginTop="1dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/widget_monthly_spent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="월급날까지"
-                android:textColor="#70717A"
-                android:textSize="10sp" />
+                android:layout_weight="1"
+                android:text="200,000원"
+                android:textColor="#17141F"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/widget_monthly_budget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0원"
-                android:textColor="#1A1B22"
-                android:textSize="16sp"
+                android:text="예산 600,000원"
+                android:textColor="#9B96AA"
+                android:textSize="8sp" />
+
+            <TextView
+                android:id="@+id/widget_monthly_remaining"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="남음 400,000원"
+                android:textColor="#817C90"
+                android:textSize="8sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="21dp"
+        android:layout_marginTop="1dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -129,35 +212,35 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Flutter 계산 결과"
-            android:textColor="#94959E"
-            android:textSize="9sp" />
+            android:text="9/15 13:37 갱신"
+            android:textColor="#9B96AA"
+            android:textSize="8sp" />
 
         <TextView
             android:id="@+id/widget_spend_action"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="21dp"
             android:background="@drawable/haru_widget_action_background"
             android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
             android:text="＋ 지출"
-            android:textColor="#7566E8"
-            android:textSize="11sp"
+            android:textColor="#6E5DE3"
+            android:textSize="10sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/widget_schedule_action"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginStart="5dp"
+            android:layout_height="21dp"
+            android:layout_marginStart="4dp"
             android:background="@drawable/haru_widget_action_background"
             android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
             android:text="일정"
-            android:textColor="#7566E8"
-            android:textSize="11sp"
+            android:textColor="#6E5DE3"
+            android:textSize="10sp"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

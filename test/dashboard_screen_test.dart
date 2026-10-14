@@ -30,9 +30,16 @@ void main() {
     await _pumpDashboard(tester, now: DateTime(2026, 9, 11, 12));
 
     expect(find.byKey(const Key('today_tab')), findsOneWidget);
-    expect(find.text('오늘의 여백'), findsOneWidget);
+    expect(find.text('DAYVE'), findsOneWidget);
+    expect(find.text('오늘도, 충분한 하루'), findsOneWidget);
+    expect(find.text('9월 11일 금요일'), findsOneWidget);
+    expect(find.text('오늘의 여백'), findsNothing);
+    expect(find.byKey(const Key('dayve_status_pill')), findsOneWidget);
+    expect(find.text('퇴근까지 06시간 00분'), findsOneWidget);
     expect(find.byKey(const Key('dashboard_time_area')), findsOneWidget);
-    expect(find.text('오늘 써도 되는 돈'), findsOneWidget);
+    expect(find.text('이번 달 소비 현황'), findsOneWidget);
+    expect(find.text('오늘 써도 되는 돈'), findsNothing);
+    expect(find.byKey(const Key('open_spend_sheet')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('spending_tab_destination')));
     await tester.pumpAndSettle();
@@ -72,7 +79,21 @@ void main() {
     expect(find.byKey(const Key('schedule_settings_sheet')), findsOneWidget);
     expect(find.text('설정'), findsOneWidget);
     expect(find.text('알림 및 잠금화면'), findsOneWidget);
-    expect(find.text('Live Update 진단'), findsOneWidget);
+    expect(find.text('개발자 진단'), findsNothing);
+    expect(find.text('Live Update 진단'), findsNothing);
+  });
+
+  testWidgets('hero and progress cards do not open settings', (tester) async {
+    await _pumpDashboard(tester, now: DateTime(2026, 9, 11, 12));
+
+    await tester.tap(find.byKey(const Key('today_status_card')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('schedule_settings_sheet')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('work_progress_card')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('schedule_settings_sheet')), findsNothing);
+    expect(find.byKey(const Key('open_settings')), findsOneWidget);
   });
 
   testWidgets('first lock screen enable shows guidance and requests permission',
@@ -144,9 +165,10 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await _pumpDashboard(tester);
-    expect(find.text('오늘의 여백'), findsOneWidget);
+    expect(find.text('오늘의 여백'), findsNothing);
     expect(find.byKey(const Key('dashboard_time_area')), findsOneWidget);
-    expect(find.byKey(const Key('dashboard_money_area')), findsOneWidget);
+    expect(find.byKey(const Key('today_status_card')), findsOneWidget);
+    expect(find.text('오늘 써도 되는 돈'), findsNothing);
     await tester.tap(find.byTooltip('설정').first);
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('schedule_settings_sheet')), findsOneWidget);
@@ -193,6 +215,12 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await _pumpDashboard(tester);
+    await tester.drag(
+      find.byKey(const Key('today_tab')),
+      const Offset(0, -420),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('open_spend_sheet')));
     await tester.tap(find.byKey(const Key('open_spend_sheet')));
     await tester.pumpAndSettle();
 
@@ -222,6 +250,12 @@ void main() {
   testWidgets('custom keypad handles digits quick amounts and backspace',
       (tester) async {
     await _pumpDashboard(tester);
+    await tester.drag(
+      find.byKey(const Key('today_tab')),
+      const Offset(0, -360),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('open_spend_sheet')));
     await tester.tap(find.byKey(const Key('open_spend_sheet')));
     await tester.pumpAndSettle();
     final field = find.byKey(const Key('spend_amount_field'));
@@ -243,7 +277,7 @@ void main() {
     await _pumpDashboard(tester, now: DateTime(2026, 9, 11, 12));
 
     expect(find.byKey(const Key('pixel_cat_progress_track')), findsOneWidget);
-    expect(find.text('근무 진행'), findsOneWidget);
+    expect(find.text('DAYVE · 근무 중'), findsOneWidget);
     expect(find.byKey(const Key('haru_pixel_pet')), findsOneWidget);
   });
 
@@ -252,7 +286,7 @@ void main() {
     await _pumpDashboard(tester, now: DateTime(2026, 9, 11, 20, 30));
 
     expect(find.byKey(const Key('pixel_cat_progress_track')), findsOneWidget);
-    expect(find.text('자유시간 진행'), findsOneWidget);
+    expect(find.text('오늘의 하루 진행률'), findsOneWidget);
     expect(find.text('50%'), findsOneWidget);
   });
 
@@ -333,7 +367,7 @@ void main() {
     );
     final widgetRefreshes = harness.homeWidget.refreshCount;
     final notificationSyncs = harness.notification.syncCount;
-    expect(find.text('03시간 00분'), findsOneWidget);
+    expect(find.textContaining('03시간 00분'), findsWidgets);
 
     await tester.tap(find.byTooltip('설정').first);
     await tester.pumpAndSettle();
@@ -352,7 +386,7 @@ void main() {
     await tester.tap(find.byKey(const Key('save_sleep_settings')));
     await tester.pumpAndSettle();
 
-    expect(find.text('03시간 05분'), findsOneWidget);
+    expect(find.textContaining('03시간 05분'), findsWidgets);
     expect(harness.store.loadSettings()!.schedule.sleepMinutes, 23 * 60 + 5);
     expect(harness.homeWidget.refreshCount, widgetRefreshes + 1);
     expect(harness.notification.syncCount, notificationSyncs + 1);
@@ -397,7 +431,7 @@ void main() {
       ),
     );
 
-    expect(find.text('DAYVE · 근무 중'), findsOneWidget);
+    expect(find.text('오늘의 하루 진행률'), findsOneWidget);
     expect(find.byKey(const Key('dayve_pixel_cat')), findsOneWidget);
   });
 

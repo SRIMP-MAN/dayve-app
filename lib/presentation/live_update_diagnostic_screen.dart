@@ -139,8 +139,8 @@ class _LiveUpdateDiagnosticScreenState
                     diagnostic.progressStyle,
                   ),
                   _DiagnosticRow.check(
-                    'Custom RemoteViews 없음',
-                    !diagnostic.customRemoteViews,
+                    'DAYVE Custom RemoteViews',
+                    diagnostic.customRemoteViews,
                   ),
                   _DiagnosticRow.check('Colorized 아님', !diagnostic.colorized),
                   _DiagnosticRow.text('Channel', diagnostic.channelId),

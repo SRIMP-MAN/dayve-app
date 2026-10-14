@@ -98,7 +98,7 @@ void main() {
     expect(calculation.nextRefresh.at, DateTime(2026, 9, 15, 1, 30));
   });
 
-  test('editing spend regenerates widget budget values', () async {
+  test('editing spend regenerates widget monthly remaining value', () async {
     final preferences = await SharedPreferences.getInstance();
     final spendService = DailySpendService(SettingsStore(preferences));
     final now = DateTime(2026, 9, 14, 12);
@@ -121,7 +121,6 @@ void main() {
       after.snapshot.remainingBudgetAmount,
       before.snapshot.remainingBudgetAmount - 30000,
     );
-    expect(after.snapshot.budgetAmount, lessThan(before.snapshot.budgetAmount));
   });
 
   test('cycle boundary is included as a meaningful refresh candidate', () {

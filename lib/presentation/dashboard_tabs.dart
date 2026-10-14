@@ -2,17 +2,26 @@ import 'package:flutter/material.dart';
 
 import '../domain/models/daily_spend.dart';
 import 'dayve_design_tokens.dart';
+import 'dayve_header.dart';
+import 'monthly_expense_card.dart';
+import 'today_status_card.dart';
 import 'work_progress_card.dart';
 
 class HaruTodayTab extends StatelessWidget {
   const HaruTodayTab({
+    required this.now,
     required this.dateLabel,
     required this.state,
     required this.timeValue,
     required this.timeCaption,
-    required this.recommendedBudget,
+    required this.monthlyBudget,
+    required this.monthlyRemaining,
+    required this.monthlySpent,
+    required this.monthlyUsageRatio,
+    required this.remainingDays,
     required this.onScheduleTap,
     required this.onSpendTap,
+    required this.onMonthlyDetailsTap,
     this.nextEvent,
     this.progress,
     this.progressLabel,
@@ -20,47 +29,85 @@ class HaruTodayTab extends StatelessWidget {
     super.key,
   });
 
+  final DateTime now;
   final String dateLabel;
   final String state;
   final String timeValue;
   final String timeCaption;
-  final String recommendedBudget;
+  final int monthlyBudget;
+  final int monthlyRemaining;
+  final int monthlySpent;
+  final double monthlyUsageRatio;
+  final int remainingDays;
   final String? nextEvent;
   final double? progress;
   final String? progressLabel;
   final String? overrideLabel;
   final VoidCallback onScheduleTap;
   final VoidCallback onSpendTap;
+  final VoidCallback onMonthlyDetailsTap;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      key: const Key('today_tab'),
-      padding: const EdgeInsets.fromLTRB(18, 4, 18, 20),
-      children: [
-        Text(
-          dateLabel,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: DayveColors.secondaryText,
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: DayveColors.background,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [DayveColors.background, Color(0xfffbf9ff), Colors.white],
+          stops: [0, .52, 1],
+        ),
+      ),
+      child: ListView(
+        key: const Key('today_tab'),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 18),
+        children: [
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 430),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  DayveHeader(
+                    dateLabel: dateLabel,
+                    onSettingsTap: onScheduleTap,
+                  ),
+                  TodayStatusCard(
+                    state: state,
+                    value: timeValue,
+                    caption: timeCaption,
+                    now: now,
+                    overrideLabel: overrideLabel,
+                  ),
+                  if (progress != null) ...[
+                    const SizedBox(height: 9),
+                    HaruTimeArea(
+                      now: now,
+                      state: state,
+                      value: timeValue,
+                      caption: timeCaption,
+                      nextEvent: nextEvent,
+                      progress: progress!,
+                      progressLabel: progressLabel,
+                    ),
+                  ],
+                  const SizedBox(height: 9),
+                  MonthlyExpenseCard(
+                    monthlyBudget: monthlyBudget,
+                    monthlyRemaining: monthlyRemaining,
+                    monthlySpent: monthlySpent,
+                    usageRatio: monthlyUsageRatio,
+                    remainingDays: remainingDays,
+                    onSpendTap: onSpendTap,
+                    onDetailsTap: onMonthlyDetailsTap,
+                  ),
+                ],
               ),
-        ),
-        const SizedBox(height: DayveSpacing.sm),
-        HaruTimeArea(
-          state: state,
-          value: timeValue,
-          caption: timeCaption,
-          nextEvent: nextEvent,
-          progress: progress,
-          progressLabel: progressLabel,
-          overrideLabel: overrideLabel,
-          onScheduleTap: onScheduleTap,
-        ),
-        const SizedBox(height: DayveSpacing.sm),
-        _TodayBudgetCard(
-          recommended: recommendedBudget,
-          onSpendTap: onSpendTap,
-        ),
-      ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -167,105 +214,34 @@ class HaruSpendingTab extends StatelessWidget {
 
 class HaruTimeArea extends StatelessWidget {
   const HaruTimeArea({
+    required this.now,
     required this.state,
     required this.value,
     required this.caption,
-    required this.onScheduleTap,
     this.nextEvent,
-    this.progress,
+    required this.progress,
     this.progressLabel,
-    this.overrideLabel,
     super.key,
   });
 
+  final DateTime now;
   final String state;
   final String value;
   final String caption;
   final String? nextEvent;
-  final double? progress;
+  final double progress;
   final String? progressLabel;
-  final String? overrideLabel;
-  final VoidCallback onScheduleTap;
 
   @override
   Widget build(BuildContext context) {
     return WorkProgressCard(
+      now: now,
       state: state,
       value: value,
       caption: caption,
       nextEvent: nextEvent,
       progress: progress,
       progressLabel: progressLabel,
-      overrideLabel: overrideLabel,
-      onTap: onScheduleTap,
-    );
-  }
-}
-
-class _TodayBudgetCard extends StatelessWidget {
-  const _TodayBudgetCard({
-    required this.recommended,
-    required this.onSpendTap,
-  });
-
-  final String recommended;
-  final VoidCallback onSpendTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      key: const Key('dashboard_money_area'),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: DayveColors.card,
-        borderRadius: BorderRadius.circular(DayveRadii.medium),
-        border: Border.all(color: DayveColors.border),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '오늘 써도 되는 돈',
-                  style: TextStyle(
-                    color: DayveColors.primaryPurple,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    recommended,
-                    style: const TextStyle(
-                      color: DayveColors.primaryText,
-                      fontSize: 27,
-                      height: 1,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          FilledButton.tonalIcon(
-            key: const Key('open_spend_sheet'),
-            onPressed: onSpendTap,
-            icon: const Icon(Icons.add_rounded, size: 18),
-            label: const Text('지출 입력'),
-            style: FilledButton.styleFrom(
-              minimumSize: const Size(0, 40),
-              padding: const EdgeInsets.symmetric(horizontal: 13),
-              visualDensity: VisualDensity.compact,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

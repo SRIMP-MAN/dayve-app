@@ -313,6 +313,7 @@ class SettingsStore {
     );
     await _preferences.setString(_dayOverridesKey, encoded);
   }
+
 }
 
 DayOverrideType _legacyOverrideType(String name) {

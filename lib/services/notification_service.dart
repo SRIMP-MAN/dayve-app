@@ -225,7 +225,9 @@ class HaruNotificationService extends ChangeNotifier {
       if (android == null) return true;
       return await android.requestNotificationsPermission() ?? true;
     } on PlatformException catch (error) {
-      debugPrint('Notification permission unavailable: $error');
+      if (kDebugMode) {
+        debugPrint('Notification permission unavailable: $error');
+      }
       return false;
     } on MissingPluginException {
       return false;
@@ -294,7 +296,9 @@ class HaruNotificationService extends ChangeNotifier {
         await consumePendingLiveUpdateAction();
       }
     } on PlatformException catch (error) {
-      debugPrint('Notification initialization unavailable: $error');
+      if (kDebugMode) {
+        debugPrint('Notification initialization unavailable: $error');
+      }
     }
   }
 
@@ -368,7 +372,9 @@ class HaruNotificationService extends ChangeNotifier {
       await _scheduleSpendReminder(settings.dailyReminderMinutes);
       await _scheduleSleepNotifications(settings);
     } on PlatformException catch (error) {
-      debugPrint('Notification scheduling unavailable: $error');
+      if (kDebugMode) {
+        debugPrint('Notification scheduling unavailable: $error');
+      }
     }
   }
 

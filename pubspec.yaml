@@ -21,8 +21,28 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/images/dayve_app_mark.png
+  remove_alpha_ios: true
+  adaptive_icon_background: "#7C86E8"
+  adaptive_icon_foreground: assets/images/dayve_app_mark.png
+  adaptive_icon_foreground_inset: 16
+  web:
+    generate: true
+    image_path: assets/images/dayve_app_mark.png
+    background_color: "#7C86E8"
+    theme_color: "#7C86E8"
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/dayve_app_mark.png
     - assets/images/dayve_pixel_cat.png
+    - assets/day_backgrounds/morning.png
+    - assets/day_backgrounds/day.png
+    - assets/day_backgrounds/evening.png
+    - assets/day_backgrounds/night.png

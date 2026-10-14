@@ -18,7 +18,6 @@ import 'domain/services/time_engine.dart';
 import 'presentation/dashboard_tabs.dart';
 import 'presentation/dayve_design_tokens.dart';
 import 'presentation/haru_sheets.dart';
-import 'presentation/live_update_diagnostic_screen.dart';
 import 'services/calendar_integration_service.dart';
 import 'services/notification_service.dart';
 import 'services/home_widget_service.dart';
@@ -636,21 +635,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                     enabled ? 'enableLockScreenLive' : 'disableLockScreenLive',
                   ),
                 ),
-                _OverrideTile(
-                  icon: Icons.lock_outline,
-                  label: '잠금화면 돈 정보',
-                  detail:
-                      _settings.lockScreenMoneyVisible ? '표시 중' : '숨김 · 기본값',
-                  onTap: () => Navigator.pop(sheetContext, 'lockScreen'),
-                ),
-                const Divider(height: 22),
-                const _SettingsSectionLabel('개발자 진단'),
-                _OverrideTile(
-                  icon: Icons.science_outlined,
-                  label: 'Live Update 진단',
-                  detail: 'Now Bar 승격 조건과 현재 상태를 확인해요',
-                  onTap: () => Navigator.pop(sheetContext, 'diagnostic'),
-                ),
               ],
             ),
           ),
@@ -675,18 +659,6 @@ class _DashboardScreenState extends State<DashboardScreen>
           return;
         case 'disableLockScreenLive':
           await _setLockScreenLiveEnabled(false);
-          return;
-        case 'lockScreen':
-          await _showLockScreenSettings();
-          return;
-        case 'diagnostic':
-          await Navigator.of(context).push<void>(
-            MaterialPageRoute(
-              builder: (_) => LiveUpdateDiagnosticScreen(
-                notificationService: widget.notificationService,
-              ),
-            ),
-          );
           return;
         case 'custom':
           await _setTodaySchedule(today);
@@ -975,72 +947,6 @@ class _DashboardScreenState extends State<DashboardScreen>
         );
       }
     }
-    if (!mounted) return;
-    setState(() => _settings = updated);
-    widget.onSettingsChanged?.call(updated);
-    await _refreshDataViews();
-  }
-
-  Future<void> _showLockScreenSettings() async {
-    var showMoney = _settings.lockScreenMoneyVisible;
-    final result = await showModalBottomSheet<bool>(
-      context: context,
-      useSafeArea: true,
-      backgroundColor: const Color(0xfffbfaff),
-      builder: (sheetContext) => StatefulBuilder(
-        builder: (context, setSheetState) => SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  '잠금화면 정보',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  '시간과 진행률은 항상 표시하고, 돈 정보만 선택할 수 있어요.',
-                  style: TextStyle(color: Color(0xff777382), fontSize: 13),
-                ),
-                const SizedBox(height: 8),
-                SwitchListTile(
-                  key: const Key('lock_screen_money_toggle'),
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('잠금화면 돈 정보'),
-                  subtitle: Text(showMoney ? '표시' : '숨김'),
-                  value: showMoney,
-                  onChanged: (value) => setSheetState(() => showMoney = value),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(sheetContext),
-                        child: const Text('취소'),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: FilledButton(
-                        key: const Key('save_lock_screen_settings'),
-                        onPressed: () => Navigator.pop(sheetContext, showMoney),
-                        child: const Text('저장'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-    if (!mounted || result == null) return;
-    final updated = _settings.copyWith(lockScreenMoneyVisible: result);
-    await widget.settingsStore.saveSettings(updated);
     if (!mounted) return;
     setState(() => _settings = updated);
     widget.onSettingsChanged?.call(updated);
@@ -1822,26 +1728,33 @@ class _DashboardScreenState extends State<DashboardScreen>
     final timeCaption = isDayOff ? '오늘은 쉬어도 괜찮아요' : _timeTitle(time.state);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _selectedTabIndex == 0 ? '오늘의 여백' : '소비',
-          style: const TextStyle(fontWeight: FontWeight.w800),
-        ),
-        backgroundColor: Colors.transparent,
-        actions: [
-          IconButton(
-            key: const Key('open_settings'),
-            onPressed: _showOverrideMenu,
-            tooltip: '설정',
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
+      appBar: _selectedTabIndex == 0
+          ? null
+          : AppBar(
+              title: const Text(
+                '소비',
+                style: TextStyle(
+                  fontSize: 29,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -1.1,
+                ),
+              ),
+              backgroundColor: Colors.transparent,
+              actions: [
+                IconButton(
+                  key: const Key('open_settings'),
+                  onPressed: _showOverrideMenu,
+                  tooltip: '설정',
+                  icon: const Icon(Icons.settings_outlined),
+                ),
+              ],
+            ),
       body: SafeArea(
         child: IndexedStack(
           index: _selectedTabIndex,
           children: [
             HaruTodayTab(
+              now: _now,
               dateLabel: DateFormat('M월 d일 EEEE', 'ko_KR').format(_now),
               state: _stateLabel(time.state),
               timeValue: timeValue,
@@ -1851,15 +1764,22 @@ class _DashboardScreenState extends State<DashboardScreen>
                       time.state == HaruDayState.afterWork
                   ? time.progress
                   : null,
-              progressLabel:
-                  time.state == HaruDayState.working ? '근무 진행' : '자유시간 진행',
+              progressLabel: '오늘의 하루 진행률',
               overrideLabel: _scheduleEntry == null
                   ? null
                   : _scheduleEntryLabel(_scheduleEntry!),
               onScheduleTap: _showOverrideMenu,
-              recommendedBudget:
-                  '${currency.format(budget.recommendedDailyAmount)}원',
+              monthlyBudget: budget.cycleBudget,
+              monthlyRemaining: budget.remainingBudget,
+              monthlySpent: budget.spentAmount,
+              monthlyUsageRatio: budget.usageRatio,
+              remainingDays: budget.remainingDays,
               onSpendTap: _editTodaySpend,
+              onMonthlyDetailsTap: () {
+                if (_selectedTabIndex != 1) {
+                  setState(() => _selectedTabIndex = 1);
+                }
+              },
             ),
             HaruSpendingTab(
               remainingBudget: '${currency.format(budget.remainingBudget)}원',

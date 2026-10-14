@@ -24,6 +24,8 @@ void main() {
 
     expect(find.text('근무 진행'), findsOneWidget);
     expect(find.text('50%'), findsOneWidget);
+    expect(find.byKey(const Key('dayve_progress_badge')), findsOneWidget);
+    expect(find.byKey(const Key('dayve_segmented_pill')), findsOneWidget);
     expect(find.byKey(const Key('haru_pixel_pet')), findsOneWidget);
     final image = tester.widget<Image>(
       find.byKey(const Key('dayve_pixel_cat_image')),
@@ -46,12 +48,15 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  test('pixel cat position stays inside both ends of the gauge', () {
-    expect(pixelCatLeftFor(width: 300, catWidth: 46, progress: -1), 0);
+  test('pixel cat early correction fades out through the first ten percent',
+      () {
+    expect(pixelCatLeftFor(width: 300, catWidth: 46, progress: 0), -12);
+    expect(pixelCatLeftFor(width: 300, catWidth: 46, progress: .05), -6);
+    expect(pixelCatLeftFor(width: 300, catWidth: 46, progress: .10), 0);
     expect(
       pixelCatLeftFor(width: 300, catWidth: 46, progress: 0.5),
       closeTo(111.36, .001),
     );
-    expect(pixelCatLeftFor(width: 300, catWidth: 46, progress: 2), 254);
+    expect(pixelCatLeftFor(width: 300, catWidth: 46, progress: 1), 254);
   });
 }

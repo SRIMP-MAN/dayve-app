@@ -15,15 +15,15 @@ class LiveUpdateSnapshot {
     this.showCheckoutActions = false,
     this.scheduleDate,
     this.showMoney = false,
-    this.todayBudgetLabel = '',
     this.remainingBudgetLabel = '',
     this.stateLabel = '',
     this.progressLeadingLabel = '',
     this.progressTrailingLabel = '',
     this.endLabel = '',
-    this.todaySpendable = '',
+    this.monthlyBudget = '',
     this.monthlyRemaining = '',
     this.monthlySpent = '',
+    this.monthlyUsagePercent = 0,
   });
 
   final bool visible;
@@ -42,15 +42,15 @@ class LiveUpdateSnapshot {
   final bool showCheckoutActions;
   final DateTime? scheduleDate;
   final bool showMoney;
-  final String todayBudgetLabel;
   final String remainingBudgetLabel;
   final String stateLabel;
   final String progressLeadingLabel;
   final String progressTrailingLabel;
   final String endLabel;
-  final String todaySpendable;
+  final String monthlyBudget;
   final String monthlyRemaining;
   final String monthlySpent;
+  final int monthlyUsagePercent;
 
   Map<String, Object?> toMap() => {
         'visible': visible,
@@ -69,16 +69,16 @@ class LiveUpdateSnapshot {
         'showCheckoutActions': showCheckoutActions,
         'scheduleDate': scheduleDate?.toIso8601String(),
         'showMoney': showMoney,
-        'todayBudgetLabel': todayBudgetLabel,
         'remainingBudgetLabel': remainingBudgetLabel,
         'moneyVisible': showMoney,
         'stateLabel': stateLabel,
         'progressLeadingLabel': progressLeadingLabel,
         'progressTrailingLabel': progressTrailingLabel,
         'endLabel': endLabel,
-        'todaySpendable': todaySpendable,
+        'monthlyBudget': monthlyBudget,
         'monthlyRemaining': monthlyRemaining,
         'monthlySpent': monthlySpent,
+        'monthlyUsagePercent': monthlyUsagePercent,
       };
 
   factory LiveUpdateSnapshot.fromMap(Map<Object?, Object?> map) {
@@ -104,15 +104,18 @@ class LiveUpdateSnapshot {
       scheduleDate: _dateFromIso(map['scheduleDate']),
       showMoney:
           map['moneyVisible'] as bool? ?? map['showMoney'] as bool? ?? false,
-      todayBudgetLabel: map['todayBudgetLabel'] as String? ?? '',
       remainingBudgetLabel: map['remainingBudgetLabel'] as String? ?? '',
       stateLabel: map['stateLabel'] as String? ?? '',
       progressLeadingLabel: map['progressLeadingLabel'] as String? ?? '',
       progressTrailingLabel: map['progressTrailingLabel'] as String? ?? '',
       endLabel: map['endLabel'] as String? ?? '',
-      todaySpendable: map['todaySpendable'] as String? ?? '',
+      monthlyBudget: map['monthlyBudget'] as String? ?? '',
       monthlyRemaining: map['monthlyRemaining'] as String? ?? '',
       monthlySpent: map['monthlySpent'] as String? ?? '',
+      monthlyUsagePercent: (map['monthlyUsagePercent'] as num? ?? 0)
+          .toInt()
+          .clamp(0, 100)
+          .toInt(),
     );
   }
 }

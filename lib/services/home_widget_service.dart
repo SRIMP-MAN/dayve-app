@@ -112,7 +112,7 @@ Future<void> refreshHomeWidgetSnapshot(
     calculation.snapshot.encode(),
   );
   await HomeWidget.updateWidget(
-    qualifiedAndroidName: 'com.haruapp.haru_app.HaruWidgetProvider',
+    qualifiedAndroidName: 'com.dayve.app.HaruWidgetProvider',
   );
   await _scheduleNextRefresh(current, calculation);
 }

@@ -3,14 +3,21 @@ import 'package:flutter/material.dart';
 abstract final class DayveColors {
   static const background = Color(0xfff8f6ff);
   static const backgroundSoft = Color(0xfff3f0ff);
-  static const primaryPurple = Color(0xff7566e8);
-  static const lightPurple = Color(0xffc8beff);
+  static const primaryPurple = Color(0xff6e5de3);
+  static const secondaryPurple = Color(0xff8676ef);
+  static const lightPurple = Color(0xffb9a8f8);
+  static const verySoftPurple = Color(0xffeee9ff);
   static const progressStart = Color(0xff9c8cff);
-  static const progressEnd = Color(0xff87c8ff);
-  static const primaryText = Color(0xff181721);
-  static const secondaryText = Color(0xff777483);
+  static const progressEnd = Color(0xff8bcdf2);
+  static const softBlue = Color(0xffcfe9ff);
+  static const pinkAccent = Color(0xfff6b6cd);
+  static const primaryText = Color(0xff17141f);
+  static const secondaryText = Color(0xff817c90);
+  static const lightText = Color(0xff9b96aa);
   static const card = Color(0xf0ffffff);
-  static const border = Color(0xffeae6fa);
+  static const border = Color(0xffece7f5);
+  static const divider = Color(0xffe7e3f0);
+  static const inactiveTrack = Color(0xffefedf6);
 }
 
 abstract final class DayveRadii {

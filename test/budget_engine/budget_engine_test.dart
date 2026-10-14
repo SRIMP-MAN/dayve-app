@@ -6,7 +6,7 @@ import 'package:haru_app/domain/services/budget_engine.dart';
 void main() {
   const engine = BudgetEngine();
 
-  test('recommends daily budget from remaining amount', () {
+  test('calculates monthly usage from budget and spending', () {
     final result = engine.calculate(
       now: DateTime(2026, 9, 11),
       profile: const BudgetProfile(
@@ -23,7 +23,30 @@ void main() {
     );
 
     expect(result.remainingBudget, 500000);
-    expect(result.recommendedDailyAmount, greaterThan(0));
+    expect(result.usageRatio, closeTo(1 / 6, .0001));
+    expect(result.usagePercent, closeTo(16.666, .001));
+  });
+
+  test('monthly usage and remaining amount are clamped after overspending', () {
+    final result = engine.calculate(
+      now: DateTime(2026, 9, 11),
+      profile: const BudgetProfile(
+        cycleBudget: 100000,
+        cycleStartDay: 1,
+      ),
+      spends: [
+        DailySpend(
+          date: DateTime(2026, 9, 10),
+          amount: 130000,
+          updatedAt: DateTime(2026, 9, 10),
+        ),
+      ],
+    );
+
+    expect(result.spentAmount, 130000);
+    expect(result.remainingBudget, 0);
+    expect(result.usageRatio, 1);
+    expect(result.usagePercent, 100);
   });
 
   test('month end rolls into a new monthly cycle', () {

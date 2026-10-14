@@ -1,3 +1,4 @@
+import '../content/dayve_progress_copy.dart';
 import '../models/live_update_snapshot.dart';
 import '../models/schedule_entry.dart';
 import '../models/schedule_profile.dart';
@@ -9,14 +10,16 @@ typedef LiveUpdateMoneyResolver = LiveUpdateMoneyLabels Function(DateTime at);
 
 class LiveUpdateMoneyLabels {
   const LiveUpdateMoneyLabels({
-    required this.today,
+    required this.budget,
     required this.remaining,
     required this.spent,
+    required this.usagePercent,
   });
 
-  final String today;
+  final String budget;
   final String remaining;
   final String spent;
+  final int usagePercent;
 }
 
 class LiveUpdatePlanner {
@@ -141,20 +144,21 @@ class LiveUpdatePlanner {
         ? '$activityLabel ${_clockDurationLabel(remainingMinutes)}'
         : '';
     final progressLeadingLabel = switch (summary.state) {
-      HaruDayState.working => '오전은 수고했어요',
+      HaruDayState.working =>
+        DayveProgressCopy.workingLeading(updatedAt).replaceFirst('!', ''),
       HaruDayState.afterWork => '오늘도 수고했어요',
       _ => '',
     };
     final progressTrailingLabel = switch (summary.state) {
-      HaruDayState.working => headline,
+      HaruDayState.working => DayveProgressCopy.workingTrailing(updatedAt),
       HaruDayState.afterWork => '내 시간 보내는 중',
       _ => '',
     };
     final money = visible ? moneyFor?.call(updatedAt) : null;
     final endAt = summary.segmentEndAt ?? summary.nextEventAt;
     final endLabel = visible
-        ? '${_timeLabel(endAt)} '
-            '${summary.state == HaruDayState.working ? '퇴근' : '취침'}'
+        ? '${summary.state == HaruDayState.working ? '퇴근' : '취침'} '
+            '${_timeLabel(endAt)}'
         : '';
 
     return LiveUpdateSnapshot(
@@ -173,15 +177,15 @@ class LiveUpdatePlanner {
       showCheckoutActions: showCheckoutActions,
       scheduleDate: scheduleDate,
       showMoney: money != null,
-      todayBudgetLabel: money == null ? '' : '오늘 ${money.today}',
       remainingBudgetLabel: money == null ? '' : '이번 달 ${money.remaining}',
       stateLabel: stateLabel,
       progressLeadingLabel: progressLeadingLabel,
       progressTrailingLabel: progressTrailingLabel,
       endLabel: endLabel,
-      todaySpendable: money?.today ?? '',
+      monthlyBudget: money?.budget ?? '',
       monthlyRemaining: money?.remaining ?? '',
       monthlySpent: money?.spent ?? '',
+      monthlyUsagePercent: money?.usagePercent ?? 0,
     );
   }
 
@@ -211,7 +215,6 @@ class LiveUpdatePlanner {
         (previous.endsAt != next.endsAt ||
             previous.progressPercent != next.progressPercent ||
             previous.showCheckoutActions != next.showCheckoutActions ||
-            previous.todayBudgetLabel != next.todayBudgetLabel ||
             previous.remainingBudgetLabel != next.remainingBudgetLabel ||
             previous.monthlySpent != next.monthlySpent);
   }
