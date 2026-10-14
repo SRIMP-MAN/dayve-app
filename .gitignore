@@ -2,6 +2,7 @@
 .packages
 .pub/
 build/
+android/.kotlin/
 .flutter-plugins
 .flutter-plugins-dependencies
 .idea/
